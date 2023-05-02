@@ -1,6 +1,6 @@
 from Modules import *
 
-version = "v0.1 BETA"
+version = "v0.1.1 BETA"
 guild_ID = 739608667594162206 
 bot_token = "MTEwMjM3MzQ1NzQ4NTg5NzcyOA.Gsgnkw.BvpBpi23kQXSqJYqsmZIGFpUNafNNUXO8Khtew"
 
@@ -17,20 +17,28 @@ async def on_ready():
     except Exception as e:
         print(e)
 
-@bot.tree.command(name='test') 
+@bot.tree.command(name='test', description='Test Command') 
 async def test_command(interaction: discord.Interaction): 
-    await interaction.response.send_message('test')
+    await interaction.response.send_message("test")
 
-@bot.tree.command(name='botinfo') 
+@bot.tree.command(name='bot_info', description='Basic Bot Info') 
 async def botinfo_command(interaction: discord.Interaction): 
-    await interaction.response.send_message("Current Version: "+version+"\n\n\nCatoBot - Made by Catotron #6333")
+    await interaction.response.send_message("Current Version: "+version+"\n\nCatoBot - Made by Catotron #6333")
 
-@bot.tree.command(name='shutdown')
+@bot.tree.command(name='shutdown', description='Shutdown the bot')
 async def shutdown_command(interaction: discord.Interaction): 
-    await interaction.response.send_message(f"Shutting down")
+    await interaction.response.send_message("Shutting down")
     await bot.close()
 
-@bot.command()
+@bot.tree.command(name='latest_video', description='Shows Latest Video')
+async def lastest_video_command(interaction: discord.Interaction):
+    await interaction.response.send_message("Catotron's Last video was: x\nPosted on: (date)")
+
+@bot.tree.command(name='latest_short', description='Shows Latest Short')
+async def lastest_short_command(interaction: discord.Interaction):
+    await interaction.response.send_message("Catotron's Last short was: x\nPosted on (date)")
+
+@bot.command() # 'Classic' Command
 async def shutdown(ctx,arg): # arg is the second word following command // 
     if arg == 'now':
         await ctx.send(f'Shutting Down')
@@ -38,21 +46,12 @@ async def shutdown(ctx,arg): # arg is the second word following command //
     else:
         print(f'Not a vaild Command')
 
-@bot.command()
+@bot.command() # 'Classic' Command
 async def sync(ctx,arg): # arg is the second word following command // 
     if arg == 'now':
         await ctx.send(f'Syncing Bot to Discord')
         await bot.close()
     else:
         print(f'Not a vaild Command')
-
-
-#@bot.command(description='sync commands')
-#async def sync(interaction: discord.Interaction):
-#    if interaction.user.id == 515470819804184577:
-#        await bot.sync()
-#        print('Command tree synced.')
-#    else:
-#        await interaction.response.send_message('You must be the owner to use this command!')
 
 bot.run(bot_token) 

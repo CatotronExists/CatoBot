@@ -1,0 +1,10 @@
+v0.1.1 - 2/05/2023
+- Command Descriptions
+- All commands now have a Description
+
+v0.1 - 2/05/2023 - [Basic Commands]
+- Launch with 3 Basic Commands
+    - Test, Bot Info and shutdown
+
+
+
