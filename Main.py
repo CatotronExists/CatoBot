@@ -1,0 +1,58 @@
+from Modules import *
+
+version = "v0.1 BETA"
+guild_ID = 739608667594162206 
+bot_token = "MTEwMjM3MzQ1NzQ4NTg5NzcyOA.Gsgnkw.BvpBpi23kQXSqJYqsmZIGFpUNafNNUXO8Khtew"
+
+intents = discord.Intents.default()
+intents.message_content = True
+bot = commands.Bot(command_prefix='.', intents=intents)
+
+@bot.event
+async def on_ready():
+    print(print(f'------------------------------\n| Logged on as CatoBot#1701\n| Running Version '+version+'\n------------------------------'))
+    try:
+        synced = await bot.tree.sync()
+        print(f"Synced {len(synced)} command(s)")
+    except Exception as e:
+        print(e)
+
+@bot.tree.command(name='test') 
+async def test_command(interaction: discord.Interaction): 
+    await interaction.response.send_message('test')
+
+@bot.tree.command(name='botinfo') 
+async def botinfo_command(interaction: discord.Interaction): 
+    await interaction.response.send_message("Current Version: "+version+"\n\n\nCatoBot - Made by Catotron #6333")
+
+@bot.tree.command(name='shutdown')
+async def shutdown_command(interaction: discord.Interaction): 
+    await interaction.response.send_message(f"Shutting down")
+    await bot.close()
+
+@bot.command()
+async def shutdown(ctx,arg): # arg is the second word following command // 
+    if arg == 'now':
+        await ctx.send(f'Shutting Down')
+        await bot.close()
+    else:
+        print(f'Not a vaild Command')
+
+@bot.command()
+async def sync(ctx,arg): # arg is the second word following command // 
+    if arg == 'now':
+        await ctx.send(f'Syncing Bot to Discord')
+        await bot.close()
+    else:
+        print(f'Not a vaild Command')
+
+
+#@bot.command(description='sync commands')
+#async def sync(interaction: discord.Interaction):
+#    if interaction.user.id == 515470819804184577:
+#        await bot.sync()
+#        print('Command tree synced.')
+#    else:
+#        await interaction.response.send_message('You must be the owner to use this command!')
+
+bot.run(bot_token) 
