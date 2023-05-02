@@ -2,7 +2,7 @@ from Modules import *
 
 version = "v0.1.1 BETA"
 guild_ID = 739608667594162206 
-bot_token = "MTEwMjM3MzQ1NzQ4NTg5NzcyOA.Gsgnkw.BvpBpi23kQXSqJYqsmZIGFpUNafNNUXO8Khtew"
+bot_token = "No You cant have this"
 
 intents = discord.Intents.default()
 intents.message_content = True
