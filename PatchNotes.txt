@@ -1,6 +1,13 @@
+v0.2 - 3/05/2023 - [More Commands]
+- New commands
+    - bot_stats, Get the stats of the bot. (Currently shows; Amount of commands used, Uptime and Online Since)
+    - socials, Shows Catotron's socials
+- Config File
+    - New config file to easily change the bot 
+
 v0.1.1 - 2/05/2023
 - Command Descriptions
-- All commands now have a Description
+    - All commands now have a Description
 
 v0.1 - 2/05/2023 - [Basic Commands]
 - Launch with 3 Basic Commands
