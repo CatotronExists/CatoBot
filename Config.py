@@ -1,9 +1,9 @@
 ### CONFIG SETTINGS ###
 
 # Bot Setup
-version = "v0.3 BETA dev"
+version = "v0.3 BETA"
 guild_ID = 739608667594162206 
-bot_token = "MTEwMjM3MzQ1NzQ4NTg5NzcyOA.GQCnci.OUn_UiRhTZc1RCFz9SGStvIVy5bZJAhlmWqA1o"
+bot_token = "lol"
 ###
 
 # Stats
