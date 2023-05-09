@@ -1,3 +1,19 @@
+V0.3 - x/05/2023 - [Permissions]
+- Permissions
+    - Permissions have been set for more dangerous commands
+        - shutdown, test, have been locked to admin only
+        - all commands that dont have any functionality yet have been locked to owner-only
+
+Command Changes    
+- First Button Command
+    - Socials command now has buttons (as the first test with buttons)
+- Further work to add Content related commands
+    - Commands have been Added
+        - New commands social_stats and update_api
+    - Still working on API calls
+- bot_info has merged into bot_stats
+- 'Classic' Commands Removed
+
 v0.2 - 3/05/2023 - [More Commands]
 - New commands
     - bot_stats, Get the stats of the bot. (Currently shows; Amount of commands used, Uptime and Online Since)
