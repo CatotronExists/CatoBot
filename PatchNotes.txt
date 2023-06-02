@@ -1,4 +1,65 @@
-V0.3 - x/05/2023 - [Permissions]
+V0.4 - 2/06/2023 - [The Database Update]
+This update Brings Database storage to CatoBot.
+I had planned to also release Moderation tools with this update. But due to how long the database took to setup I have pushed moderation to the next version
+The moderation tools have been added but dont do anything yet, its more of a placeholder for now. 
+
+This update is important, as all future versions will be built of this new database so it was important that I got it right the first time.
+Hopefully nothing goes wrong and the next update should not take as long as this one has. 
+- Catotron
+
+and if there are any issues create one here: https://github.com/CatotronExists/CatoBot/issues :)
+
+Additions
+- Permanent bot hosting
+    The bot is only online when I am testing it, starting from the launch of v0.4 the bot will always be online.
+    I have made a Testing bot so I can keep working while the bot is online 
+
+- Database
+    - Total Commands now saves when you use a command
+    - Tracks how many times each command has been used
+    - User stats are also saved 
+        - For now only messages, commands and user join date are saved
+    - Powered by MongoDB
+
+- Dev mode switch
+    - Since there is now a "live" bot and a "testing" bot I have added a simple switch between them
+- More work towards API calls
+
+
+New Commands
+- user_lookup
+    - Get stats for a user
+    - Shows join date, messages sent and commands used
+    - Any user that joined before this update will have a join time set to midnight UTC of the date they joined (2-03-2022 13:49:12 -> 2-03-2023 00:00:00)
+
+- command_leaderboard
+    - Shows how much each command has been used (sorted from most to least)
+
+Changes
+    
+- Starting Value for Commands_Used is no longer able to be changed due to the new system
+    (I might be able to bring it back later, but for now it has been removed)
+
+- Use of commands in bot DMs have been disabled
+    - This patches to ability to use locked commands in DMs
+    I do have plans to add features exclusive to bot DMs in future
+
+- Removed Test Slash Command
+- All commands now have a fail safe incase discord throws an error 
+- Terminal Startup Messages have been changed slightly
+- Terminal now shows what command was used
+- bot_stats command now shows date the bot started up
+- ??the start of something larger??
+
+Fixes
+- Fixed typo bot_stats command in the 'made by' section, (Catotron #6333 -> Catotron#6333)
+- button_test1 wasn't counting towards Commands_Used
+
+Known Issues
+- Shutdown command doesnt always work
+- "UTC" is shown after the error message if user has no join date when using user_lookup
+
+V0.3 - 9/05/2023 - [Permissions]
 - Permissions
     - Permissions have been set for more dangerous commands
         - shutdown, test, have been locked to admin only

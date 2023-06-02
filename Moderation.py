@@ -10,6 +10,7 @@ from Modules import *
 #       - Mutes
 #       - Kicks
 #       - Reasons
+#   - Join Date
 # Moderation
 #   - Kicks
 #   - Bans
