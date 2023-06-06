@@ -1,3 +1,23 @@
+V0.4.1 - 7/06/2023 - [The Database Update: Patch 1]
+Minor patch to fix some major issues that the last update created
+
+Additions
+- Version name is now different when in dev mode
+
+Fixes
+- Fixed where anyone could use /shutdown
+- Fixed where some commands would not respond, (Well it would just not fast enough for Discord)
+    - Saving to the database now happens after bot response is sent
+        (This also makes the bot response alot faster, but doesnt apply to all commands)
+- Fixed where /shutdown wouldnt work unless done twice, (Because the bot hoster attempts to auto reboot the bot when it crashes. Unless the bot crash twice in 60sec)
+    - Added a system allowing /shutdown to work with the bot hosting service
+    - This also fixes the shutdown command not always working
+
+Known Issues
+- /command_leaderboard still doesnt respond fast enough (This command has been disabled for now)
+- Bot crash caused by using /command_leaderboard when at least one command has no uses
+- UTC is still shown if user has no join date when using /user_lookup
+
 V0.4 - 2/06/2023 - [The Database Update]
 This update Brings Database storage to CatoBot.
 I had planned to also release Moderation tools with this update. But due to how long the database took to setup I have pushed moderation to the next version

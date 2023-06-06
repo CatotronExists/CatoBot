@@ -130,29 +130,58 @@ def saveJoinDate(userID,joined_at): # Saves date and time a user joined
         print(str(userID) + " added to collection, Joined: "+str(joined_at)+" UTC")
         print("----------------------------------------//")
 
-intents = discord.Intents.all()
-intents.message_content = True
-bot = commands.Bot(command_prefix='.', intents=intents)
+### This allows the bot hosting service to work with /shutdown
+print("Checking for Recent Shutdowns...")
+result = bot_setup.find_one({"last_mode": {"$exists": True}}) # checks if user has data
+if result is not None: # yes
+    mode = result["last_mode"] # extracts data
+    if mode == "ONLINE":
+        print("Bot was last ONLINE, Shutting Down...") # stay off
+        bot_setup.update_one(
+            {"last_mode": "ONLINE"}, # find
+            {"$set": {"last_mode": "OFFLINE"}} # set
+        )   
+        startup = False
+    elif mode == "OFFLINE":
+        print("Bot was last OFFLINE, Starting Up...") # turn on
+        bot_setup.update_one(
+            {"last_mode": "OFFLINE"}, # find
+            {"$set": {"last_mode": "ONLINE"}} # set
+        )
+        startup = True
+else: # no
+    print("//----------------------------------------")
+    print("No last_mode found, Creating...")
+    data = {"last_mode": "ONLINE"}
+    x = bot_setup.insert_one(data)
+    startup = False
+    print("----------------------------------------//")
 
-@bot.event
-async def on_ready():
-    global start_time
-    print(print(f'------------------------------\n| Logged on as CatoBot#1701\n| Running Version '+version+'\n------------------------------'))
-    try: # Wait for bot to connect         
-        try: # Send a ping to confirm a successful connection
-            client.admin.command('ping')
-            print("Successfully connected to MongoDB")
+if startup == True:
+    intents = discord.Intents.all()
+    intents.message_content = True
+    bot = commands.Bot(command_prefix='.', intents=intents)
+
+    @bot.event
+    async def on_ready():
+        global start_time
+        print(print(f'------------------------------\n| Logged on as CatoBot#1701\n| Running Version '+version+'\n------------------------------'))
+        try: # Wait for bot to connect         
+            try: # Send a ping to confirm a successful connection
+                client.admin.command('ping')
+                print("Successfully connected to MongoDB")
+            except Exception as e:
+                print(e)
+
+            synced = await bot.tree.sync()
+            print(f"Synced {len(synced)} command(s)\nBot Ready\n------------------------------\n")
+            start_time = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
         except Exception as e:
             print(e)
-
-        synced = await bot.tree.sync()
-        print(f"Synced {len(synced)} command(s)\nBot Ready\n------------------------------\n")
-        start_time = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
-    except Exception as e:
-        print(e)
+else: print("Shutting down Server")
 
 # Slash Commands
-    
+    # vvv will crash when bot doesnt turn on
 @bot.tree.command(name='shutdown', description='Shutdown the bot')
 @commands.guild_only()
 async def shutdown_command(interaction: discord.Interaction): 
@@ -171,15 +200,15 @@ async def shutdown_command(interaction: discord.Interaction):
 @commands.guild_only()
 async def bot_stats_command(interaction: discord.Interaction): 
     global commands_used, start_time, current_time, uptime
-    command = 'bot_stats'
-    updateCommandUsage(command)
-    updateCommandsUsed()
-    userID = interaction.user.id
-    updateCommandsSent(userID)
     current_time = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
     uptime = datetime.datetime.strptime(current_time,'%d-%m-%Y %H:%M:%S') - datetime.datetime.strptime(start_time,'%d-%m-%Y %H:%M:%S')
     try:
         await interaction.response.send_message("Current Version: "+str(version)+"\nTotal Commands Used: "+str(commands_used)+"\nBot Uptime: "+str(uptime)+" // Online Since: "+str(start_time)+" AEST\n-------------------------------\nCatoBot - Made by Catotron#6333")
+        command = 'bot_stats'
+        updateCommandUsage(command)
+        updateCommandsUsed()
+        userID = interaction.user.id
+        updateCommandsSent(userID)
     except discord.errors.NotFound:
         print("Interaction not found or expired")
 
@@ -187,11 +216,6 @@ async def bot_stats_command(interaction: discord.Interaction):
 @commands.guild_only()
 async def test_command(interaction: discord.Interaction, user: discord.User = None):
     global joined_at, messages_sent, commands_sent
-    command = 'user_lookup'
-    updateCommandUsage(command)
-    updateCommandsUsed()
-    userID = interaction.user.id
-    updateCommandsSent(userID)
     if user is None: # if no user is selected, chooses author
         user = interaction.user
     userID = user.id # converts Username to ID
@@ -200,20 +224,25 @@ async def test_command(interaction: discord.Interaction, user: discord.User = No
     getUserCommandsSent(userID)
     try:
         await interaction.response.send_message("Information for "+str(user)+" | UserID: ("+str(userID)+")\nJoin Date: "+str(joined_at)+" UTC\nMessages Sent: "+str(messages_sent)+"\nCommands Sent: "+str(commands_sent))
+        command = 'user_lookup'
+        updateCommandUsage(command)
+        updateCommandsUsed()
+        userID = interaction.user.id
+        updateCommandsSent(userID)
     except discord.errors.NotFound:
         print("Interaction not found or expired")
 
 @bot.tree.command(name='command_leaderboard', description='Displays leaderboard for top commands')
 @commands.guild_only()
 async def shutdown_command(interaction: discord.Interaction): 
-    command = 'command_leaderboard'
-    updateCommandUsage(command)
-    updateCommandsUsed()
-    userID = interaction.user.id
-    updateCommandsSent(userID)
     getCommandUsage()
     try: 
         await interaction.response.send_message("Command Leaderboard\n"+'\n'.join(leaderboard_data))
+        command = 'command_leaderboard'
+        updateCommandUsage(command)
+        updateCommandsUsed()
+        userID = interaction.user.id
+        updateCommandsSent(userID)
     except discord.errors.NotFound:
         print("Interaction not found or expired")
 ###
@@ -228,13 +257,13 @@ class Button_test1(discord.ui.View):
 @bot.tree.command(name='button_test1', description='Testing Buttons') # Create a slash command
 @commands.guild_only()
 async def button(interaction: discord.Interaction):
-    command = 'button_test1'
-    updateCommandUsage(command) 
-    updateCommandsUsed()
-    userID = interaction.user.id
-    updateCommandsSent(userID)
     try:
         await interaction.response.send_message("This is a button!", view=Button_test1()) # Send a message with our View class that contains the button
+        command = 'button_test1'
+        updateCommandUsage(command) 
+        updateCommandsUsed()
+        userID = interaction.user.id
+        updateCommandsSent(userID)
     except discord.errors.NotFound:
         print("Interaction not found or expired")
 
@@ -269,11 +298,6 @@ class Social_Buttons(discord.ui.View):
 @bot.tree.command(name='socials', description="Catotron's Socials") 
 @commands.guild_only()
 async def socials_command(interaction: discord.Interaction):
-    command = 'socials'
-    updateCommandUsage(command)  
-    updateCommandsUsed() 
-    userID = interaction.user.id
-    updateCommandsSent(userID)
     social_buttons = Social_Buttons()
     social_buttons.add_item(social_buttons.youtube_button)
     social_buttons.add_item(social_buttons.twitch_button)
@@ -281,6 +305,11 @@ async def socials_command(interaction: discord.Interaction):
     social_buttons.add_item(social_buttons.twitter_button)
     try:
         await interaction.response.send_message("Youtube: <https://youtube.com/@catotron>\nTwitch: <https://twitch.tv/catotronlive>\nTiktok: <https://tiktok.com/@catotronshorts> \nTwitter: <https://twitter.com/nortotaC>",view=social_buttons)
+        command = 'socials'
+        updateCommandUsage(command)  
+        updateCommandsUsed() 
+        userID = interaction.user.id
+        updateCommandsSent(userID)
     except discord.errors.NotFound:
         print("Interaction not found or expired")
 ###
@@ -290,54 +319,54 @@ async def socials_command(interaction: discord.Interaction):
 @bot.tree.command(name='update_api', description='Refreshes API data')
 @commands.guild_only()
 async def lastest_short_command(interaction: discord.Interaction):
-    command = 'update_api'
-    updateCommandUsage(command)
-    updateCommandsUsed()
-    userID = interaction.user.id
-    updateCommandsSent(userID)
     try:
         await interaction.response.send_message("Refreshing API data")
+        command = 'update_api'
+        updateCommandUsage(command)
+        updateCommandsUsed()
+        userID = interaction.user.id
+        updateCommandsSent(userID)
     except discord.errors.NotFound:
         print("Interaction not found or expired")
 
 @bot.tree.command(name='latest_video', description='Shows Latest Video')
 @commands.guild_only()
 async def lastest_video_command(interaction: discord.Interaction):
-    command = 'latest_video'
-    updateCommandUsage(command)
-    updateCommandsUsed()
     #getLatestVideo()
-    userID = interaction.user.id
-    updateCommandsSent(userID)
     try:
         await interaction.response.send_message("Catotron's Last video was: x\nPosted on: (date)")
+        command = 'latest_video'
+        updateCommandUsage(command)
+        updateCommandsUsed()
+        userID = interaction.user.id
+        updateCommandsSent(userID)
     except discord.errors.NotFound:
         print("Interaction not found or expired")
 
 @bot.tree.command(name='latest_short', description='Shows Latest Short')
 @commands.guild_only()
 async def lastest_short_command(interaction: discord.Interaction):
-    command = 'latest_short'
-    updateCommandUsage(command)
-    updateCommandsUsed()
     #getLatestShort()
-    userID = interaction.user.id
-    updateCommandsSent(userID)
     try:
         await interaction.response.send_message("Catotron's Last short was: x\nPosted on (date)")
+        command = 'latest_short'
+        updateCommandUsage(command)
+        updateCommandsUsed()
+        userID = interaction.user.id
+        updateCommandsSent(userID)
     except discord.errors.NotFound:
         print("Interaction not found or expired")
 
 @bot.tree.command(name='social_stats', description='Shows Stats from socials')
 @commands.guild_only()
 async def lastest_short_command(interaction: discord.Interaction):
-    command = 'social_stats'
-    updateCommandUsage(command)
-    updateCommandsUsed()
-    userID = interaction.user.id
-    updateCommandsSent(userID)
     try:
         await interaction.response.send_message("Youtube: x Subscribers // Uploads: // Views:  \nTwitch: x Followers // Subscribers: \n TikTok: x Followers // Likes: \n Twitter: x Followers // Tweets: \n Last Updated: [Will update every 12 hours]")
+        command = 'social_stats'
+        updateCommandUsage(command)
+        updateCommandsUsed()
+        userID = interaction.user.id
+        updateCommandsSent(userID)
     except discord.errors.NotFound:
         print("Interaction not found or expired")
 ###    
@@ -392,11 +421,6 @@ class BanReason(discord.ui.Select):
 @bot.tree.command(name='moderation', description="Opens Moderation Menu") 
 @commands.guild_only()
 async def moderation_command(interaction: discord.Interaction): 
-    command = 'moderation'
-    updateCommandUsage(command)
-    updateCommandsUsed() 
-    userID = interaction.user.id
-    updateCommandsSent(userID)
     moderation_buttons = Moderation_Buttons()
     moderation_buttons.add_item(moderation_buttons.warn_button)
     moderation_buttons.add_item(moderation_buttons.mute_button)
@@ -405,6 +429,11 @@ async def moderation_command(interaction: discord.Interaction):
     moderation_buttons.add_item(moderation_buttons.close_button)
     try:
         await interaction.response.send_message("Actions for (user)\n--------------------------------\nCurrent Warns:\nTimes Muted:\nTimes Kicked:\nTimes Banned:\n--------------------------------",view=moderation_buttons)
+        command = 'moderation'
+        updateCommandUsage(command)
+        updateCommandsUsed() 
+        userID = interaction.user.id
+        updateCommandsSent(userID)
         await bot.wait_for('button_click', check=lambda i: i.component.label.startswith('Select Reason',view=BanReason()))
         #await interaction.response.send_message("Select Reason",view=BanReason())
     except discord.errors.NotFound:
