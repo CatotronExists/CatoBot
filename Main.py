@@ -2,6 +2,20 @@ from Modules import *
 #from Content_Notifications import getLatestVideo, getLatestShort
 from Config import * 
 
+async def leaderboardBuilder(): # Easy to scale up for later leaderboards
+    leaderboard_data = []
+    async def fetchCommandLeaderBoardData(): # gets all data at the same time
+        for i in command_list:
+            result = bot_stats.find_one({i + "_command_usage": {"$exists": True}})
+            if result is not None:
+                for field_name, value in result.items():
+                    if field_name != '_id':
+                        result = (f"{field_name} : {value}")
+                        leaderboard_data.append(result)
+        return leaderboard_data
+    leaderboard_data = await fetchCommandLeaderBoardData()
+    return leaderboard_data
+
 def updateCommandUsage(command): ### Updates how many times each command has been use
     print(command + " Command Used")
 
@@ -83,7 +97,7 @@ def getUserJoinDate(userID): # Gets join date for user
     if result is not None: # yes
         joined_at = result[str(userID) + "_join_date"] # extracts data
     else: # no
-        joined_at = "USER NOT FOUND | Contact Catotron#6333"
+        joined_at = "USER NOT FOUND | Contact @Catotron"
         print("//----------------------------------------")
         print(str(userID) + " does not exist in the collection [_join_date]")
         print("----------------------------------------//")
@@ -94,7 +108,7 @@ def getUserMessagesSent(userID): # Gets messages sent for user
     if result is not None: # yes
         messages_sent = result[str(userID) + "_messages_sent"] # extracts data
     else: # no
-        messages_sent = "USER NOT FOUND | Contact Catotron#6333"
+        messages_sent = 0
         print("//----------------------------------------")
         print(str(userID) + " does not exist in the collection [_messages_sent]")
         print("----------------------------------------//")
@@ -105,18 +119,10 @@ def getUserCommandsSent(userID): # Gets commands sent for user
     if result is not None: # yes
         commands_sent = result[str(userID) + "_commands_sent"] # extracts data
     else: # no
-        commands_sent = "USER NOT FOUND | Contact Catotron#6333"
+        commands_sent = 0
         print("//----------------------------------------")
         print(str(userID) + " does not exist in the collection [_commands_sent]")
         print("----------------------------------------//")
-
-def getCommandUsage(): # Gets usage for all commands
-    global command_list, leaderboard_data
-    query = bot_stats.find_one({"Commands_Used": {"$exists": True}})
-    leaderboard_data = ["Total Commands Sent: "+str(query["Commands_Used"])]
-    for i in sorted(command_list, key=lambda x: bot_stats.find_one({x + "_command_usage": {"$exists": True}})[x + "_command_usage"], reverse=True):
-        result = bot_stats.find_one({i + "_command_usage": {"$exists": True}})
-        leaderboard_data.append(i.capitalize() + " Used "+(str((result[i + "_command_usage"])))+" times")
 
 def saveJoinDate(userID,joined_at): # Saves date and time a user joined
     result = user_stats.find_one({str(userID) + "_join_date": {"$exists": True}}) # checks if user has data
@@ -131,32 +137,36 @@ def saveJoinDate(userID,joined_at): # Saves date and time a user joined
         print("----------------------------------------//")
 
 ### This allows the bot hosting service to work with /shutdown
-print("Checking for Recent Shutdowns...")
-result = bot_setup.find_one({"last_mode": {"$exists": True}}) # checks if user has data
-if result is not None: # yes
-    mode = result["last_mode"] # extracts data
-    if mode == "ONLINE":
-        print("Bot was last ONLINE, Shutting Down...") # stay off
-        bot_setup.update_one(
-            {"last_mode": "ONLINE"}, # find
-            {"$set": {"last_mode": "OFFLINE"}} # set
-        )   
+if dev_mode == True:
+    startup = True
+else:
+    print("Checking for Recent Shutdowns...")
+    result = bot_setup.find_one({"last_mode": {"$exists": True}}) # checks if user has data
+    if result is not None: # yes
+        mode = result["last_mode"] # extracts data
+        if mode == "ONLINE":
+            print("Bot was last ONLINE, Shutting Down...") # stay off
+            bot_setup.update_one(
+                {"last_mode": "ONLINE"}, # find
+                {"$set": {"last_mode": "OFFLINE"}} # set
+            )   
+            startup = False
+        elif mode == "OFFLINE":
+            print("Bot was last OFFLINE, Starting Up...") # turn on
+            bot_setup.update_one(
+                {"last_mode": "OFFLINE"}, # find
+                {"$set": {"last_mode": "ONLINE"}} # set
+            )
+            startup = True
+    else: # no
+        print("//----------------------------------------")
+        print("No last_mode found, Creating...")
+        data = {"last_mode": "ONLINE"}
+        x = bot_setup.insert_one(data)
         startup = False
-    elif mode == "OFFLINE":
-        print("Bot was last OFFLINE, Starting Up...") # turn on
-        bot_setup.update_one(
-            {"last_mode": "OFFLINE"}, # find
-            {"$set": {"last_mode": "ONLINE"}} # set
-        )
-        startup = True
-else: # no
-    print("//----------------------------------------")
-    print("No last_mode found, Creating...")
-    data = {"last_mode": "ONLINE"}
-    x = bot_setup.insert_one(data)
-    startup = False
-    print("----------------------------------------//")
+        print("----------------------------------------//")
 
+# vvv will crash when bot doesnt turn on
 if startup == True:
     intents = discord.Intents.all()
     intents.message_content = True
@@ -181,15 +191,17 @@ if startup == True:
 else: print("Shutting down Server")
 
 # Slash Commands
-    # vvv will crash when bot doesnt turn on
+
 @bot.tree.command(name='shutdown', description='Shutdown the bot')
 @commands.guild_only()
-async def shutdown_command(interaction: discord.Interaction): 
+async def shutdown_command(interaction: discord.Interaction):
     command = 'shutdown'
-    updateCommandUsage(command)
-    updateCommandsUsed()
     userID = interaction.user.id
-    updateCommandsSent(userID)
+    async def save(): 
+        updateCommandUsage(command)
+        updateCommandsUsed()
+        updateCommandsSent(userID)
+    await save()
     try:
         await interaction.response.send_message("Shutting down")
         await bot.close()
@@ -203,12 +215,14 @@ async def bot_stats_command(interaction: discord.Interaction):
     current_time = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
     uptime = datetime.datetime.strptime(current_time,'%d-%m-%Y %H:%M:%S') - datetime.datetime.strptime(start_time,'%d-%m-%Y %H:%M:%S')
     try:
-        await interaction.response.send_message("Current Version: "+str(version)+"\nTotal Commands Used: "+str(commands_used)+"\nBot Uptime: "+str(uptime)+" // Online Since: "+str(start_time)+" AEST\n-------------------------------\nCatoBot - Made by Catotron#6333")
+        await interaction.response.send_message("Current Version: "+str(version)+"\nTotal Commands Used: "+str(commands_used)+"\nBot Uptime: "+str(uptime)+" // Online Since: "+str(start_time)+" AEST\n-------------------------------\nCatoBot - Made by @Catotron")
         command = 'bot_stats'
-        updateCommandUsage(command)
-        updateCommandsUsed()
         userID = interaction.user.id
-        updateCommandsSent(userID)
+        async def save():
+            updateCommandUsage(command)
+            updateCommandsUsed()
+            updateCommandsSent(userID)
+        await save()
     except discord.errors.NotFound:
         print("Interaction not found or expired")
 
@@ -219,30 +233,40 @@ async def test_command(interaction: discord.Interaction, user: discord.User = No
     if user is None: # if no user is selected, chooses author
         user = interaction.user
     userID = user.id # converts Username to ID
-    getUserJoinDate(userID)
-    getUserMessagesSent(userID)
-    getUserCommandsSent(userID)
+    async def fetch():
+        getUserJoinDate(userID)
+        getUserMessagesSent(userID)
+        getUserCommandsSent(userID)
+    await fetch()
+    if joined_at != "USER NOT FOUND | Contact @Catotron":
+        str(joined_at+" UTC")
+    else: pass
     try:
-        await interaction.response.send_message("Information for "+str(user)+" | UserID: ("+str(userID)+")\nJoin Date: "+str(joined_at)+" UTC\nMessages Sent: "+str(messages_sent)+"\nCommands Sent: "+str(commands_sent))
+        await interaction.response.send_message("Information for "+str(user)+" | UserID: ("+str(userID)+")\nJoin Date: "+str(joined_at)+"\nMessages Sent: "+str(messages_sent)+"\nCommands Sent: "+str(commands_sent))
         command = 'user_lookup'
-        updateCommandUsage(command)
-        updateCommandsUsed()
-        userID = interaction.user.id
-        updateCommandsSent(userID)
+        async def save():
+            updateCommandUsage(command)
+            updateCommandsUsed()
+            updateCommandsSent(userID)
+        await save()
     except discord.errors.NotFound:
         print("Interaction not found or expired")
 
-@bot.tree.command(name='command_leaderboard', description='Displays leaderboard for top commands')
+@bot.tree.command(name='command_leaderboard', description='Displays leaderboard for command usage')
 @commands.guild_only()
 async def shutdown_command(interaction: discord.Interaction): 
-    getCommandUsage()
     try: 
-        await interaction.response.send_message("Command Leaderboard\n"+'\n'.join(leaderboard_data))
+        leaderboard_data = await leaderboardBuilder()
+        await interaction.response.send_message("Loading Leaderboard...\nThis may take a few seconds")
+        time.sleep(5)
+        await interaction.edit_original_response(content ="Command Leaderboard for Catotron's World\n"+'\n'.join(leaderboard_data)) # edit message to add leaderboard data
         command = 'command_leaderboard'
-        updateCommandUsage(command)
-        updateCommandsUsed()
         userID = interaction.user.id
-        updateCommandsSent(userID)
+        async def save():
+            updateCommandUsage(command)
+            updateCommandsUsed()
+            updateCommandsSent(userID)
+        await save()
     except discord.errors.NotFound:
         print("Interaction not found or expired")
 ###
@@ -260,10 +284,12 @@ async def button(interaction: discord.Interaction):
     try:
         await interaction.response.send_message("This is a button!", view=Button_test1()) # Send a message with our View class that contains the button
         command = 'button_test1'
-        updateCommandUsage(command) 
-        updateCommandsUsed()
         userID = interaction.user.id
-        updateCommandsSent(userID)
+        async def save():
+            updateCommandUsage(command)
+            updateCommandsUsed()
+            updateCommandsSent(userID)
+        await save()
     except discord.errors.NotFound:
         print("Interaction not found or expired")
 
@@ -306,10 +332,12 @@ async def socials_command(interaction: discord.Interaction):
     try:
         await interaction.response.send_message("Youtube: <https://youtube.com/@catotron>\nTwitch: <https://twitch.tv/catotronlive>\nTiktok: <https://tiktok.com/@catotronshorts> \nTwitter: <https://twitter.com/nortotaC>",view=social_buttons)
         command = 'socials'
-        updateCommandUsage(command)  
-        updateCommandsUsed() 
         userID = interaction.user.id
-        updateCommandsSent(userID)
+        async def save():
+            updateCommandUsage(command)
+            updateCommandsUsed()
+            updateCommandsSent(userID)
+        await save()
     except discord.errors.NotFound:
         print("Interaction not found or expired")
 ###
@@ -322,10 +350,12 @@ async def lastest_short_command(interaction: discord.Interaction):
     try:
         await interaction.response.send_message("Refreshing API data")
         command = 'update_api'
-        updateCommandUsage(command)
-        updateCommandsUsed()
         userID = interaction.user.id
-        updateCommandsSent(userID)
+        async def save():
+            updateCommandUsage(command)
+            updateCommandsUsed()
+            updateCommandsSent(userID)
+        await save()
     except discord.errors.NotFound:
         print("Interaction not found or expired")
 
@@ -336,10 +366,12 @@ async def lastest_video_command(interaction: discord.Interaction):
     try:
         await interaction.response.send_message("Catotron's Last video was: x\nPosted on: (date)")
         command = 'latest_video'
-        updateCommandUsage(command)
-        updateCommandsUsed()
         userID = interaction.user.id
-        updateCommandsSent(userID)
+        async def save():
+            updateCommandUsage(command)
+            updateCommandsUsed()
+            updateCommandsSent(userID)
+        await save()
     except discord.errors.NotFound:
         print("Interaction not found or expired")
 
@@ -350,10 +382,12 @@ async def lastest_short_command(interaction: discord.Interaction):
     try:
         await interaction.response.send_message("Catotron's Last short was: x\nPosted on (date)")
         command = 'latest_short'
-        updateCommandUsage(command)
-        updateCommandsUsed()
         userID = interaction.user.id
-        updateCommandsSent(userID)
+        async def save():
+            updateCommandUsage(command)
+            updateCommandsUsed()
+            updateCommandsSent(userID)
+        await save()
     except discord.errors.NotFound:
         print("Interaction not found or expired")
 
@@ -363,10 +397,12 @@ async def lastest_short_command(interaction: discord.Interaction):
     try:
         await interaction.response.send_message("Youtube: x Subscribers // Uploads: // Views:  \nTwitch: x Followers // Subscribers: \n TikTok: x Followers // Likes: \n Twitter: x Followers // Tweets: \n Last Updated: [Will update every 12 hours]")
         command = 'social_stats'
-        updateCommandUsage(command)
-        updateCommandsUsed()
         userID = interaction.user.id
-        updateCommandsSent(userID)
+        async def save():
+            updateCommandUsage(command)
+            updateCommandsUsed()
+            updateCommandsSent(userID)
+        await save()
     except discord.errors.NotFound:
         print("Interaction not found or expired")
 ###    
@@ -430,10 +466,12 @@ async def moderation_command(interaction: discord.Interaction):
     try:
         await interaction.response.send_message("Actions for (user)\n--------------------------------\nCurrent Warns:\nTimes Muted:\nTimes Kicked:\nTimes Banned:\n--------------------------------",view=moderation_buttons)
         command = 'moderation'
-        updateCommandUsage(command)
-        updateCommandsUsed() 
         userID = interaction.user.id
-        updateCommandsSent(userID)
+        async def save():
+            updateCommandUsage(command)
+            updateCommandsUsed()
+            updateCommandsSent(userID)
+        await save()
         await bot.wait_for('button_click', check=lambda i: i.component.label.startswith('Select Reason',view=BanReason()))
         #await interaction.response.send_message("Select Reason",view=BanReason())
     except discord.errors.NotFound:

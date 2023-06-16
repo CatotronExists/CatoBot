@@ -9,4 +9,4 @@ A simple discord bot used in Catotron's World Discord Server
 - (Soon) Statistics and more
 
 # Socials
-Created by Catotron#6333       //       youtube.com/@catotron       //       discord.gg/vxZnsy2
+Created by @Catotron       //       youtube.com/@catotron       //       discord.gg/vxZnsy2

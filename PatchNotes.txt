@@ -1,3 +1,29 @@
+V0.4.2 - 16/06/2023 - [The Database Update: Patch 2]
+Bot was slow so I made it faster
+
+Additions
+- Introducing asynchronous database requests
+    - All commands now call from and to the database asynchronously
+    - Improved preformance by alot
+
+Changes
+- Shutdown system disabled in DEV mode 
+- If a user hasn't sent a message or a command /user_lookup will now show a 0 instead of an error message
+- Updated "made by" in /bot_stats username to my new discord handle (@Catotron)
+    - also updated in /user_lookup when a join date cant be found
+    - the @ looks better I dont care :/
+
+Fixes
+- Fixed "UTC" being shown at the end of the error when the join date for that user doesnt exist when using /user_lookup
+- Fixed /command_leaderboard not responding fast enough
+    - The bot now sends a "loading" message to get around discord 3 second response window
+- Fixed bot crash caused by using /command_leaderboard when at least one command had no uses
+
+Known Issues
+- The commands sent sometimes increases for the wrong user when /user_lookup is used
+    - For some reason the bot thinks the author is the user in the "user: " field 
+- /user_lookup shows "#0" if the user searched has migrated to the new username system
+
 V0.4.1 - 7/06/2023 - [The Database Update: Patch 1]
 Minor patch to fix some major issues that the last update created
 
@@ -109,6 +135,3 @@ v0.1.1 - 2/05/2023
 v0.1 - 2/05/2023 - [Basic Commands]
 - Launch with 3 Basic Commands
     - Test, Bot Info and shutdown
-
-
-

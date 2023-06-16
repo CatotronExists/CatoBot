@@ -3,9 +3,9 @@ from Modules import *
 ##### Bot Setup
 dev_mode = False
 if dev_mode == True:
-    version = "v0.4.1 BETA DEV"
+    version = "v0.4.2 BETA DEV"
 if dev_mode == False:
-    version = "v0.4.1 BETA"
+    version = "v0.4.2 BETA"
 guild_ID = 739608667594162206 
 
 if dev_mode == True: # Testing Bot

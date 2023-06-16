@@ -9,22 +9,40 @@ h1 {
     font-size: 100px;
 }
 
+h2{
+    padding-left: 60px;
+    font-size: 55px;
+    vertical-align: top;
+}
+
+/* Menu */
 #MainMenu {
     text-align: center;
     font-size: 20px;
-    color: gray;
+    color: rgb(167, 163, 163);
 }
 
 #Menu a {
     padding: 5px 5px;
 }
 
-#Menu a:hover {
-    background-color: #999;
-    color:#EEE;
+#Menu a:link{
+    color: rgb(167, 163, 163);
+    background-color: rgb(194, 191, 191, 0.2);
+    text-decoration: none;   
 }
 
-.MenuCurrentPage {
-    background-color: #5c5959;
-    color: #EEE;
+#Menu a:visited { /*overrides used link coloring*/
+    color: rgb(167, 163, 163);
+    text-decoration: none;   
+}
+
+#Menu a:hover {
+    background-color: #999;
+    color:white;
+}
+
+#Menu a:active {
+    background-color: rgb(199, 196, 196);
+    text-decoration: none;   
 }
