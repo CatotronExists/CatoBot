@@ -1,0 +1,137 @@
+V0.4.2 - 16/06/2023 - [The Database Update: Patch 2]
+Bot was slow so I made it faster
+
+Additions
+- Introducing asynchronous database requests
+    - All commands now call from and to the database asynchronously
+    - Improved preformance by alot
+
+Changes
+- Shutdown system disabled in DEV mode 
+- If a user hasn't sent a message or a command /user_lookup will now show a 0 instead of an error message
+- Updated "made by" in /bot_stats username to my new discord handle (@Catotron)
+    - also updated in /user_lookup when a join date cant be found
+    - the @ looks better I dont care :/
+
+Fixes
+- Fixed "UTC" being shown at the end of the error when the join date for that user doesnt exist when using /user_lookup
+- Fixed /command_leaderboard not responding fast enough
+    - The bot now sends a "loading" message to get around discord 3 second response window
+- Fixed bot crash caused by using /command_leaderboard when at least one command had no uses
+
+Known Issues
+- The commands sent sometimes increases for the wrong user when /user_lookup is used
+    - For some reason the bot thinks the author is the user in the "user: " field 
+- /user_lookup shows "#0" if the user searched has migrated to the new username system
+
+V0.4.1 - 7/06/2023 - [The Database Update: Patch 1]
+Minor patch to fix some major issues that the last update created
+
+Additions
+- Version name is now different when in dev mode
+
+Fixes
+- Fixed where anyone could use /shutdown
+- Fixed where some commands would not respond, (Well it would just not fast enough for Discord)
+    - Saving to the database now happens after bot response is sent
+        (This also makes the bot response alot faster, but doesnt apply to all commands)
+- Fixed where /shutdown wouldnt work unless done twice, (Because the bot hoster attempts to auto reboot the bot when it crashes. Unless the bot crash twice in 60sec)
+    - Added a system allowing /shutdown to work with the bot hosting service
+    - This also fixes the shutdown command not always working
+
+Known Issues
+- /command_leaderboard still doesnt respond fast enough (This command has been disabled for now)
+- Bot crash caused by using /command_leaderboard when at least one command has no uses
+- UTC is still shown if user has no join date when using /user_lookup
+
+V0.4 - 2/06/2023 - [The Database Update]
+This update Brings Database storage to CatoBot.
+I had planned to also release Moderation tools with this update. But due to how long the database took to setup I have pushed moderation to the next version
+The moderation tools have been added but dont do anything yet, its more of a placeholder for now. 
+
+This update is important, as all future versions will be built of this new database so it was important that I got it right the first time.
+Hopefully nothing goes wrong and the next update should not take as long as this one has. 
+- Catotron
+
+and if there are any issues create one here: https://github.com/CatotronExists/CatoBot/issues :)
+
+Additions
+- Permanent bot hosting
+    The bot is only online when I am testing it, starting from the launch of v0.4 the bot will always be online.
+    I have made a Testing bot so I can keep working while the bot is online 
+
+- Database
+    - Total Commands now saves when you use a command
+    - Tracks how many times each command has been used
+    - User stats are also saved 
+        - For now only messages, commands and user join date are saved
+    - Powered by MongoDB
+
+- Dev mode switch
+    - Since there is now a "live" bot and a "testing" bot I have added a simple switch between them
+- More work towards API calls
+
+
+New Commands
+- user_lookup
+    - Get stats for a user
+    - Shows join date, messages sent and commands used
+    - Any user that joined before this update will have a join time set to midnight UTC of the date they joined (2-03-2022 13:49:12 -> 2-03-2023 00:00:00)
+
+- command_leaderboard
+    - Shows how much each command has been used (sorted from most to least)
+
+Changes
+    
+- Starting Value for Commands_Used is no longer able to be changed due to the new system
+    (I might be able to bring it back later, but for now it has been removed)
+
+- Use of commands in bot DMs have been disabled
+    - This patches to ability to use locked commands in DMs
+    I do have plans to add features exclusive to bot DMs in future
+
+- Removed Test Slash Command
+- All commands now have a fail safe incase discord throws an error 
+- Terminal Startup Messages have been changed slightly
+- Terminal now shows what command was used
+- bot_stats command now shows date the bot started up
+- ??the start of something larger??
+
+Fixes
+- Fixed typo bot_stats command in the 'made by' section, (Catotron #6333 -> Catotron#6333)
+- button_test1 wasn't counting towards Commands_Used
+
+Known Issues
+- Shutdown command doesnt always work
+- "UTC" is shown after the error message if user has no join date when using user_lookup
+
+V0.3 - 9/05/2023 - [Permissions]
+- Permissions
+    - Permissions have been set for more dangerous commands
+        - shutdown, test, have been locked to admin only
+        - all commands that dont have any functionality yet have been locked to owner-only
+
+Command Changes    
+- First Button Command
+    - Socials command now has buttons (as the first test with buttons)
+- Further work to add Content related commands
+    - Commands have been Added
+        - New commands social_stats and update_api
+    - Still working on API calls
+- bot_info has merged into bot_stats
+- 'Classic' Commands Removed
+
+v0.2 - 3/05/2023 - [More Commands]
+- New commands
+    - bot_stats, Get the stats of the bot. (Currently shows; Amount of commands used, Uptime and Online Since)
+    - socials, Shows Catotron's socials
+- Config File
+    - New config file to easily change the bot 
+
+v0.1.1 - 2/05/2023
+- Command Descriptions
+    - All commands now have a Description
+
+v0.1 - 2/05/2023 - [Basic Commands]
+- Launch with 3 Basic Commands
+    - Test, Bot Info and shutdown
