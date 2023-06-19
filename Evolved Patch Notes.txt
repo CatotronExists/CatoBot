@@ -1,0 +1,16 @@
+v0.5 Experimental-1 (19/06/2023)
+- Rewrite progress [5%/100%]
+
+Keys.py
+- All logins and credentials moved to Keys.py
+- dev_mode switched moved to Keys.py
+
+
+- Modules.py has been removed
+    - It was mostly pointless anyway
+- Config.py has been cleaned up
+
+- Bot startup messages have been changed
+    - Shows all config settings as bot starts up
+    - Bot startup now shows which bot started up
+    - Shows how long startup took
