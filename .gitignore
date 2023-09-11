@@ -1,1 +1,14 @@
-/Keys.py
+# Python Cache
+**/__pycache__
+
+# old files
+**/old
+
+# Keys / Passwords
+*Keys.py
+
+# Database Environment Testing
+*DatabaseInteraction.py
+
+# Notes
+*Evolved Patch Notes.txt
