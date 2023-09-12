@@ -3,6 +3,7 @@
 # Modules #
 import datetime
 import nextcord
+from nextcord import Interaction, SlashOption
 from nextcord.ext import commands
 from Config import version, guild_ID
 from Keys import bot_token, client, dev_mode
@@ -55,11 +56,14 @@ else:
         end_time = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
         startup_time = datetime.datetime.strptime(end_time,'%d-%m-%Y %H:%M:%S') - datetime.datetime.strptime(start_time,'%d-%m-%Y %H:%M:%S')
         print("Time Taken: "+str(startup_time))
-    ready = True
-
-while ready == True: pass
-
 
 ### Slash Commands
+@bot.slash_command(guild_ids=guild_ID, name="test", description="is testing")
+async def testCommand(interaction: nextcord.Interaction):
+    await interaction.send("test")
+
+@bot.slash_command(guild_ids=guild_ID, name="placeholder", description="placeholder")
+async def CommandName(interaction: nextcord.Interaction):
+    await interaction.send("a response")
 
 bot.run(bot_token)

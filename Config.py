@@ -1,8 +1,8 @@
 ### CATOBOT CONFIG ###
 from Keys import db
 
-version = "v0.5 | Experimental-2"
-guild_ID = 739608667594162206 
+version = "v0.5 | Experimental-3"
+guild_ID = 739608667594162206
 
 # Database Links
 bot_stats = db["Bot_Stats"] # defines stats (Bot_Stats Collection)
