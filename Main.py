@@ -53,18 +53,19 @@ def updateCommandsSent(userID): pass
 
 ### Startup
 error = False
+startup_start_time = datetime.datetime.now().strftime('%M:%S.%f')[:-3]
 start_time = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
-print("<<<------ Catobot "+ str(version)+" Terminal ------>>>")
-print(CBLUE + "Current Time: "+str(start_time)+ CLEAR)
-print(CYELLOW + "Connecting to MongoDB..."+ CLEAR)
+print("<<<------ Catobot "+str(version)+" Terminal ------>>>")
+print(CBLUE +"Current Time: "+str(start_time)+ CLEAR)
+print(CYELLOW +"Connecting to MongoDB..."+ CLEAR)
 
 try: # Ping MongoDB
     client.admin.command('ping')
-    print(CGREEN + "Successfully connected to MongoDB" + CLEAR)
+    print(CGREEN + "    Successfully connected to MongoDB" + CLEAR)
 except Exception as e:
     error = True
     print(e)
-    input(CRED + "There was an error connecting to MongoDB\nError: " + str(e) + CLEAR)
+    input(CRED + "    There was an error connecting to MongoDB\nError: " + str(e) + CLEAR)
 
 if error == True: ready = False # END if no connection
 
@@ -72,14 +73,15 @@ else:
     print(CBLUE + "--------------------------" + CLEAR)
     print("Bot is starting up...")
     print("Loading Bot Settings...")
-    print(CBOLD + "Version: "+str(version)+"\nDev Mode = "+str(dev_mode)+"\nGuild: "+str(guild_ID)+ CLEAR)
+    print(CBOLD + "--->> Version: "+str(version)+"\n--->> Dev Mode = "+str(dev_mode)+"\n--->> Guild: "+str(guild_ID)+ CLEAR)
     print("\nConnecting to Discord...")
 
     @bot.event
     async def on_ready():
-        end_time = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
-        startup_time = datetime.datetime.strptime(end_time,'%d-%m-%Y %H:%M:%S') - datetime.datetime.strptime(start_time,'%d-%m-%Y %H:%M:%S')
-        print(CGREEN + f"-----------------------------------------\n| Logged on as {bot.user}\n| Running Version "+version+"\n| Time Taken: "+str(startup_time)+"\n-----------------------------------------"+ CLEAR)
+        startup_end_time = datetime.datetime.now().strftime('%M:%S.%f')[:-3]
+        startup_time_delta = datetime.datetime.strptime(startup_end_time,'%M:%S.%f') - datetime.datetime.strptime(startup_start_time,'%M:%S.%f')
+        startup_time = int((startup_time_delta.total_seconds())*100)
+        print(CGREEN + f"-----------------------------------------------\n| Logged on as {bot.user}\n| Running Version "+version+"\n| Time Taken: "+str(startup_time)+" ms\n-----------------------------------------------"+ CLEAR)
 
 ### Slash Commands
 @bot.slash_command(guild_ids=[guild_ID], name="shutdown", description="Turns off the bot")
