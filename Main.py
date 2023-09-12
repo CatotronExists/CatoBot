@@ -30,8 +30,8 @@ bot = commands.Bot()
 error = False
 start_time = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
 print("<<<------ Catobot "+ str(version)+" Terminal ------>>>")
-print(CBLUE + "Current Time: "+str(start_time) + CLEAR)
-print(CYELLOW + "Connecting to MongoDB..." + CLEAR)
+print(CBLUE + "Current Time: "+str(start_time)+ CLEAR)
+print(CYELLOW + "Connecting to MongoDB..."+ CLEAR)
 
 try: # Ping MongoDB
     client.admin.command('ping')
@@ -47,23 +47,35 @@ else:
     print(CBLUE + "--------------------------" + CLEAR)
     print("Bot is starting up...")
     print("Loading Bot Settings...")
-    print(CBOLD + "Version: "+str(version)+"\nDev Mode = "+str(dev_mode)+"\nGuild: "+str(guild_ID) + CLEAR)
+    print(CBOLD + "Version: "+str(version)+"\nDev Mode = "+str(dev_mode)+"\nGuild: "+str(guild_ID)+ CLEAR)
     print("\nConnecting to Discord...")
 
     @bot.event
     async def on_ready():
-        print(CGREEN + f"-----------------------------------------\n| Logged on as {bot.user}\n| Running Version "+version+"\n-----------------------------------------" + CLEAR)
         end_time = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
         startup_time = datetime.datetime.strptime(end_time,'%d-%m-%Y %H:%M:%S') - datetime.datetime.strptime(start_time,'%d-%m-%Y %H:%M:%S')
+        print(CGREEN + f"-----------------------------------------\n| Logged on as {bot.user}\n| Running Version "+version+"\n-----------------------------------------\nTime Taken: "+str(startup_time)+ CLEAR)
         print("Time Taken: "+str(startup_time))
 
 ### Slash Commands
-@bot.slash_command(guild_ids=guild_ID, name="test", description="is testing")
+@bot.slash_command(guild_ids=guild_ID, name="shutdown", description="Turns off the bot")
 async def testCommand(interaction: nextcord.Interaction):
-    await interaction.send("test")
+    await interaction.send("Shutting Down Bot!")
 
-@bot.slash_command(guild_ids=guild_ID, name="placeholder", description="placeholder")
+@bot.slash_command(guild_ids=guild_ID, name="bot_stats", description="Displays stats for the bot")
 async def CommandName(interaction: nextcord.Interaction):
-    await interaction.send("a response")
+    await interaction.send("Bot Stats")
+
+@bot.slash_command(guild_ids=guild_ID, name="user_lookup", description="Lookup stats for a user")
+async def CommandName(interaction: nextcord.Interaction):
+    await interaction.send("Stats for (user)")
+
+@bot.slash_command(guild_ids=guild_ID, name="command_leaderboard", description="Shows leaderboard for each command usage")
+async def CommandName(interaction: nextcord.Interaction):
+    await interaction.send("Command Leaderboard:")
+
+# @bot.slash_command(guild_ids=guild_ID, name="placeholder", description="placeholder")
+# async def CommandName(interaction: nextcord.Interaction):
+#     await interaction.send("a response")
 
 bot.run(bot_token)
