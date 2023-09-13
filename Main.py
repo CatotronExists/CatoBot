@@ -45,7 +45,7 @@ def updateCommandUsage(command, userID):
     try:
         # save data
         formatOutput(output="    Successfully Saved", status="Good")
-    except Exception as e: formatOutput(output="        Error occured while saving: "+str(e), status="Error")
+    except Exception as e: formatOutput(output="    Error occured while saving: "+str(e), status="Error")
 
 def updateCommandsUsed(command): pass
 
@@ -86,10 +86,19 @@ else:
 ### Slash Commands
 @bot.slash_command(guild_ids=[guild_ID], name="shutdown", description="Turns off the bot")
 async def testCommand(interaction: nextcord.Interaction):
-    await interaction.send("Shutting Down Bot!")
     command = 'shutdown'
     userID = interaction.user.id
-    await save(command, userID)
+    if interaction.user.guild_permissions.administrator == True: # is Admin
+        await interaction.send("Shutting Down")
+        await save(command, userID)
+        try: 
+            formatOutput(output="    Shutting Down Bot", status="Good")
+            await bot.close()
+        except Exception as e: formatOutput(output="    Shutdown Failed // Error: "+str(e), status="Error")
+    else: # not Admin
+        await interaction.send("Insufficient Permissions\nMissing Administrator Permissions")
+        await save(command, userID)
+        formatOutput(output="    Insufficient Permissions for "+str(userID), status="Warning")
 
 @bot.slash_command(guild_ids=[guild_ID], name="bot_stats", description="Displays stats for the bot")
 async def botStats(interaction: nextcord.Interaction):
