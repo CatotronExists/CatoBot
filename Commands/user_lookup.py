@@ -22,9 +22,10 @@ class Command_user_lookup_Cog(commands.Cog):
     @nextcord.slash_command(guild_ids=[guild_ID], name="user_lookup", description="Lookup stats for a user")
     async def user_lookup(self, interaction: nextcord.Interaction):
         await interaction.send("Stats for (user)")
-        command = 'user_lookup'
+        command = 'command_name'
         userID = interaction.user.id
-        await save(command, userID)
+        formatOutput(output="/"+command+" Used by ("+str(userID)+")", status="Normal")
+        await save(command, userID, Type="Command")
 
 def setup(bot):
     bot.add_cog(Command_user_lookup_Cog(bot))

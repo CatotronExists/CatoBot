@@ -5,7 +5,7 @@ import datetime
 import nextcord
 from nextcord import Interaction, SlashOption
 from nextcord.ext import commands
-from Config import version, guild_ID, db_bot_stats
+from Config import version, guild_ID, db_bot_stats, db_user_data
 from Keys import bot_token, client, dev_mode
 import pymongo
 #         #
@@ -44,16 +44,13 @@ def formatOutput(output, status):
     elif status == "Warning": print(CYELLOW +"| "+str(current_time)+" || "+output+ CLEAR)
 
 ### Save Functions
-async def save(command, userID):
-    updateCommandUsage(command, userID)
-    updateCommandsUsed(command)
-    updateCommandsSent(userID)
+async def save(command, userID, Type):
+    updateCommandUsage(command)
+    updateUserData(userID, Type)
 
-def updateCommandUsage(command, userID):
-    formatOutput(output="/"+command+" Used by ("+str(userID)+")", status="Normal")
+def updateCommandUsage(command):
     try:
         data = db_bot_stats.find_one({"Commands_Used": {"$exists": True}})
-        print(data)
 
         Commands_Used = data["Commands_Used"] + 1 # always + 1
         if command == "shutdown": shutdown_usage = data["shutdown_usage"] + 1
@@ -84,9 +81,23 @@ def updateCommandUsage(command, userID):
         formatOutput(output="    Command Usage Successfully Saved", status="Good")
     except Exception as e: formatOutput(output="    Error occured while saving // Error: "+str(e), status="Error")
 
-def updateCommandsUsed(command): pass
+def updateUserData(userID, Type): 
+    data = db_user_data.find_one({"userID": userID})
+    join_date = data["join_date"]
 
-def updateCommandsSent(userID): pass
+    if Type == "Messages": messages_sent = data["messages_sent"] + 1
+    else: messages_sent = data["messages_sent"]
+
+    if Type == "Command": commands_sent = data["commands_sent"] + 1
+    else: commands_sent = data["commands_sent"]
+
+    db_user_data.update_one(
+    {"userID": userID},
+    {"$set": {"userID": userID,
+    "join_date": join_date,
+    "messages_sent": messages_sent,
+    "commands_sent": commands_sent}}
+)
 
 ### Startup
 error = False
@@ -132,9 +143,10 @@ else:
 async def shutdown(interaction: nextcord.Interaction):
     command = 'shutdown'
     userID = interaction.user.id
+    formatOutput(output="/"+command+" Used by ("+str(userID)+")", status="Normal")
     if interaction.user.guild_permissions.administrator == True: # is Admin
         await interaction.send("Shutting Down")
-        await save(command, userID)
+        await save(command, userID, Type="Command")
         try: 
             formatOutput(output="    Shutting Down Bot", status="Good")
             await bot.close()
@@ -147,6 +159,9 @@ async def shutdown(interaction: nextcord.Interaction):
 # Reload
 @bot.slash_command(guild_ids=[guild_ID], name="reload", description="Reload Bot Commands")
 async def CommandName(interaction: nextcord.Interaction):
+    command = 'command_name'
+    userID = interaction.user.id
+    formatOutput(output="/"+command+" Used by ("+str(userID)+")", status="Normal")
     await interaction.response.defer(with_message=True)
 
     formatOutput(output="Refreshing Commands", status="Normal")
@@ -158,9 +173,7 @@ async def CommandName(interaction: nextcord.Interaction):
             formatOutput(output="    /"+i+" Failed to Reload // Error: "+str(e), status="Warning")
 
     await interaction.send("Commands Reloaded")
-    command = 'command_name'
-    userID = interaction.user.id
-    await save(command, userID)
+    await save(command, userID, Type="Command")
 
 # ON JOIN
 # Create a "placeholder" user file

@@ -22,9 +22,10 @@ class Command_command_leaderboard_Cog(commands.Cog):
     @nextcord.slash_command(guild_ids=[guild_ID], name="command_leaderboard", description="Shows leaderboard for each command usage")
     async def command_leaderboard(self, interaction: nextcord.Interaction):
         await interaction.send("Command Leaderboard:")
-        command = 'command_leaderboard'
+        command = 'command_name'
         userID = interaction.user.id
-        await save(command, userID)
+        formatOutput(output="/"+command+" Used by ("+str(userID)+")", status="Normal")
+        await save(command, userID, Type="Command")
 
 def setup(bot):
     bot.add_cog(Command_command_leaderboard_Cog(bot))

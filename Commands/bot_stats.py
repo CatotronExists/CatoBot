@@ -22,9 +22,10 @@ class Command_bot_stats_Cog(commands.Cog):
     @nextcord.slash_command(guild_ids=[guild_ID], name="bot_stats", description="Displays stats for the bot")
     async def bot_stats(self, interaction: nextcord.Interaction):
         await interaction.send("Bot Stats")
-        command = 'bot_stats'
+        command = 'command_name'
         userID = interaction.user.id
-        await save(command, userID)
+        formatOutput(output="/"+command+" Used by ("+str(userID)+")", status="Normal")
+        await save(command, userID, Type="Command")
 
 def setup(bot):
     bot.add_cog(Command_bot_stats_Cog(bot))
