@@ -98,6 +98,17 @@ def updateUserData(userID, Type):
     "messages_sent": messages_sent,
     "commands_sent": commands_sent}}
 )
+def fetch(user, searched_user_id, fetchType):
+    if fetchType == "user": 
+        try:
+            formatOutput(output="    Finding Data for "+str(user), status="Normal")
+            data = db_user_data.find_one({"userID": searched_user_id})
+            formatOutput(output="    Data Found", status="Good")
+        except Exception as e: 
+            formatOutput(output="    Error Encountered when finding data // Error: "+str(e), status="Error")
+            data = "Error Encountered when finding data!"
+        return data
+    elif fetchType == "command": pass
 
 ### Startup
 error = False
@@ -144,6 +155,7 @@ async def shutdown(interaction: nextcord.Interaction):
     command = 'shutdown'
     userID = interaction.user.id
     formatOutput(output="/"+command+" Used by ("+str(userID)+")", status="Normal")
+
     if interaction.user.guild_permissions.administrator == True: # is Admin
         await interaction.send("Shutting Down")
         await save(command, userID, Type="Command")
@@ -151,6 +163,7 @@ async def shutdown(interaction: nextcord.Interaction):
             formatOutput(output="    Shutting Down Bot", status="Good")
             await bot.close()
         except Exception as e: formatOutput(output="    Shutdown Failed // Error: "+str(e), status="Error")
+
     else: # not Admin
         await interaction.send("Insufficient Permissions\nMissing Administrator Permissions")
         await save(command, userID)
@@ -159,7 +172,7 @@ async def shutdown(interaction: nextcord.Interaction):
 # Reload
 @bot.slash_command(guild_ids=[guild_ID], name="reload", description="Reload Bot Commands")
 async def CommandName(interaction: nextcord.Interaction):
-    command = 'command_name'
+    command = 'reload'
     userID = interaction.user.id
     formatOutput(output="/"+command+" Used by ("+str(userID)+")", status="Normal")
     await interaction.response.defer(with_message=True)
@@ -177,8 +190,8 @@ async def CommandName(interaction: nextcord.Interaction):
 
 # ON JOIN
 # Create a "placeholder" user file
-# user ID is an int
-# all else is a string
+# all is int
+# join_date is a string
 
 # @bot.event()
 # async def on_member_join(member: nextcord.Member):
