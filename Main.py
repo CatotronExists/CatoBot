@@ -5,7 +5,7 @@ import datetime
 import nextcord
 from nextcord import Interaction, SlashOption
 from nextcord.ext import commands
-from Config import version, guild_ID
+from Config import version, guild_ID, db_bot_stats
 from Keys import bot_token, client, dev_mode
 import pymongo
 #         #
@@ -27,7 +27,8 @@ CBOLD = '\033[1m'
 #/shutdown also loads all commands again
 
 # Vars #
-command_list = ["bot_stats", "user_lookup", "command_leaderboard"]
+extension_command_list = ["bot_stats", "user_lookup", "command_leaderboard"]
+full_command_list = ["shutdown", "reload", "bot_stats", "user_lookup", "command_leaderboard"]
 #      #
 
 ### Discord Setup
@@ -51,9 +52,37 @@ async def save(command, userID):
 def updateCommandUsage(command, userID):
     formatOutput(output="/"+command+" Used by ("+str(userID)+")", status="Normal")
     try:
+        data = db_bot_stats.find_one({"Commands_Used": {"$exists": True}})
+        print(data)
+
+        Commands_Used = data["Commands_Used"] + 1 # always + 1
+        if command == "shutdown": shutdown_usage = data["shutdown_usage"] + 1
+        else: shutdown_usage = data["shutdown_usage"]
+
+        if command == "reload": reload_usage = data["reload_usage"] + 1
+        else: reload_usage = data["reload_usage"]
+
+        if command == "bot_stats": bot_stats_usage = data["bot_stats_usage"] + 1
+        else: bot_stats_usage = data["bot_stats_usage"]
+
+        if command == "user_lookup": user_lookup_usage = data["user_lookup_usage"] + 1
+        else: user_lookup_usage = data["user_lookup_usage"]
+
+        if command == "command_leaderboard": command_leaderboard_usage = data["command_leaderboard_usage"] + 1
+        else: command_leaderboard_usage = data["command_leaderboard_usage"]
         
+        db_bot_stats.update_one(
+            {"Commands_Used": {"$exists": True}},
+            {"$set": {"Commands_Used": Commands_Used,
+            "shutdown_usage": shutdown_usage,
+            "reload_usage": reload_usage,
+            "bot_stats_usage": bot_stats_usage,
+            "user_lookup_usage": user_lookup_usage,
+            "command_leaderboard_usage": command_leaderboard_usage}}
+        )
+
         formatOutput(output="    Command Usage Successfully Saved", status="Good")
-    except Exception as e: formatOutput(output="    Error occured while saving: "+str(e), status="Error")
+    except Exception as e: formatOutput(output="    Error occured while saving // Error: "+str(e), status="Error")
 
 def updateCommandsUsed(command): pass
 
@@ -83,7 +112,7 @@ else:
     print(CBOLD + "--->> Version: "+str(version)+"\n--->> Dev Mode = "+str(dev_mode)+"\n--->> Guild: "+str(guild_ID)+ CLEAR)
     print("\nConnecting to Discord...")
     print("Loading Commands...")
-    for i in command_list:
+    for i in extension_command_list:
         try: 
             bot.load_extension("Commands."+i)
             formatOutput(output="    /"+i+" Successfully Loaded", status="Good")
@@ -93,8 +122,9 @@ else:
     async def on_ready():
         startup_end_time = datetime.datetime.now().strftime('%M:%S.%f')[:-3]
         startup_time_delta = datetime.datetime.strptime(startup_end_time,'%M:%S.%f') - datetime.datetime.strptime(startup_start_time,'%M:%S.%f')
-        startup_time = int((startup_time_delta.total_seconds())*1000)
-        print(CGREEN + f"-----------------------------------------------\n| Logged on as {bot.user}\n| Running Version "+version+"\n| Time Taken: "+str(startup_time)+" ms\n-----------------------------------------------"+ CLEAR)
+        startup_time_ms = int((startup_time_delta.total_seconds())*1000)
+        startup_time_sec = float(startup_time_ms/1000)
+        print(CGREEN + f"-----------------------------------------------\n| Logged on as {bot.user}\n| Running Version "+version+"\n| Time Taken: "+str(startup_time_ms)+" ms ("+str(startup_time_sec)+"s)\n-----------------------------------------------"+ CLEAR)
 
 ### Core Commands
 # Shutdown
@@ -120,7 +150,7 @@ async def CommandName(interaction: nextcord.Interaction):
     await interaction.response.defer(with_message=True)
 
     formatOutput(output="Refreshing Commands", status="Normal")
-    for i in command_list:
+    for i in extension_command_list:
         try: 
             bot.reload_extension("Commands."+i)
             formatOutput(output="    /"+i+" Successfully Refreshed", status="Good")
