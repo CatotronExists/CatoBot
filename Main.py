@@ -22,6 +22,14 @@ CBEIGE = '\33[36m'
 CBOLD = '\033[1m'
 #                 #
 
+# Issues
+#startup prints twice
+#/shutdown also loads all commands again
+
+# Vars #
+command_list = ["bot_stats", "user_lookup", "command_leaderboard"]
+#      #
+
 ### Discord Setup
 intents = nextcord.Intents.all()
 bot = commands.Bot()
@@ -43,8 +51,8 @@ async def save(command, userID):
 def updateCommandUsage(command, userID):
     formatOutput(output="/"+command+" Used by ("+str(userID)+")", status="Normal")
     try:
-        # save data
-        formatOutput(output="    Successfully Saved", status="Good")
+        
+        formatOutput(output="    Command Usage Successfully Saved", status="Good")
     except Exception as e: formatOutput(output="    Error occured while saving: "+str(e), status="Error")
 
 def updateCommandsUsed(command): pass
@@ -68,24 +76,30 @@ except Exception as e:
     input(CRED + "    There was an error connecting to MongoDB\nError: " + str(e) + CLEAR)
 
 if error == True: ready = False # END if no connection
-
 else:
     print(CBLUE + "--------------------------" + CLEAR)
     print("Bot is starting up...")
     print("Loading Bot Settings...")
     print(CBOLD + "--->> Version: "+str(version)+"\n--->> Dev Mode = "+str(dev_mode)+"\n--->> Guild: "+str(guild_ID)+ CLEAR)
     print("\nConnecting to Discord...")
-
+    print("Loading Commands...")
+    for i in command_list:
+        try: 
+            bot.load_extension("Commands."+i)
+            formatOutput(output="    /"+i+" Successfully Loaded", status="Good")
+        except Exception as e: 
+            formatOutput(output="    /"+i+" Failed to Load // Error: "+str(e), status="Warning")
     @bot.event
     async def on_ready():
         startup_end_time = datetime.datetime.now().strftime('%M:%S.%f')[:-3]
         startup_time_delta = datetime.datetime.strptime(startup_end_time,'%M:%S.%f') - datetime.datetime.strptime(startup_start_time,'%M:%S.%f')
-        startup_time = int((startup_time_delta.total_seconds())*100)
+        startup_time = int((startup_time_delta.total_seconds())*1000)
         print(CGREEN + f"-----------------------------------------------\n| Logged on as {bot.user}\n| Running Version "+version+"\n| Time Taken: "+str(startup_time)+" ms\n-----------------------------------------------"+ CLEAR)
 
-### Slash Commands
+### Core Commands
+# Shutdown
 @bot.slash_command(guild_ids=[guild_ID], name="shutdown", description="Turns off the bot")
-async def testCommand(interaction: nextcord.Interaction):
+async def shutdown(interaction: nextcord.Interaction):
     command = 'shutdown'
     userID = interaction.user.id
     if interaction.user.guild_permissions.administrator == True: # is Admin
@@ -100,32 +114,34 @@ async def testCommand(interaction: nextcord.Interaction):
         await save(command, userID)
         formatOutput(output="    Insufficient Permissions for "+str(userID), status="Warning")
 
-@bot.slash_command(guild_ids=[guild_ID], name="bot_stats", description="Displays stats for the bot")
-async def botStats(interaction: nextcord.Interaction):
-    await interaction.send("Bot Stats")
-    command = 'bot_stats'
+# Reload
+@bot.slash_command(guild_ids=[guild_ID], name="reload", description="Reload Bot Commands")
+async def CommandName(interaction: nextcord.Interaction):
+    await interaction.response.defer(with_message=True)
+
+    formatOutput(output="Refreshing Commands", status="Normal")
+    for i in command_list:
+        try: 
+            bot.reload_extension("Commands."+i)
+            formatOutput(output="    /"+i+" Successfully Refreshed", status="Good")
+        except Exception as e: 
+            formatOutput(output="    /"+i+" Failed to Reload // Error: "+str(e), status="Warning")
+
+    await interaction.send("Commands Reloaded")
+    command = 'command_name'
     userID = interaction.user.id
     await save(command, userID)
 
-@bot.slash_command(guild_ids=[guild_ID], name="user_lookup", description="Lookup stats for a user")
-async def userLookup(interaction: nextcord.Interaction):
-    await interaction.send("Stats for (user)")
-    command = 'user_lookup'
-    userID = interaction.user.id
-    await save(command, userID)
+# ON JOIN
+# Create a "placeholder" user file
+# user ID is an int
+# all else is a string
 
-@bot.slash_command(guild_ids=[guild_ID], name="command_leaderboard", description="Shows leaderboard for each command usage")
-async def commandLeaderboard(interaction: nextcord.Interaction):
-    await interaction.send("Command Leaderboard:")
-    command = 'command_leaderboard'
-    userID = interaction.user.id
-    await save(command, userID)
+# @bot.event()
+# async def on_member_join(member: nextcord.Member):
+#     userID = member.id
+#     formatOutput(output="", status="")
 
-# @bot.slash_command(guild_ids=[guild_ID], name="placeholder", description="placeholder")
-# async def CommandName(interaction: nextcord.Interaction):
-#     await interaction.send("a response")
-#     command = 'command_name'
-#     userID = interaction.user.id
-#     await save(command, userID)
+# perk tree for leveling????
 
 bot.run(bot_token)
