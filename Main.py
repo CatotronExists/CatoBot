@@ -33,7 +33,7 @@ full_command_list = ["shutdown", "reload", "bot_stats", "user_lookup", "command_
 
 ### Discord Setup
 intents = nextcord.Intents.all()
-bot = commands.Bot()
+bot = commands.Bot(intents=intents)
 
 ### Terminal Functions
 def formatOutput(output, status):
@@ -77,8 +77,8 @@ def updateCommandUsage(command):
             "user_lookup_usage": user_lookup_usage,
             "command_leaderboard_usage": command_leaderboard_usage}}
         )
-
         formatOutput(output="    Command Usage Successfully Saved", status="Good")
+
     except Exception as e: formatOutput(output="    Error occured while saving // Error: "+str(e), status="Error")
 
 def updateUserData(userID, Type): 
@@ -98,6 +98,7 @@ def updateUserData(userID, Type):
     "messages_sent": messages_sent,
     "commands_sent": commands_sent}}
 )
+
 def fetch(user, searched_user_id, fetchType):
     if fetchType == "user": 
         try:
@@ -109,6 +110,10 @@ def fetch(user, searched_user_id, fetchType):
             data = "Error Encountered when finding data!"
         return data
     elif fetchType == "command": pass
+
+def fetchBotStats():
+    data = 3
+    return data
 
 ### Startup
 error = False
@@ -166,7 +171,7 @@ async def shutdown(interaction: nextcord.Interaction):
 
     else: # not Admin
         await interaction.send("Insufficient Permissions\nMissing Administrator Permissions")
-        await save(command, userID)
+        await save(command, userID, Type="Command")
         formatOutput(output="    Insufficient Permissions for "+str(userID), status="Warning")
 
 # Reload
@@ -175,7 +180,9 @@ async def CommandName(interaction: nextcord.Interaction):
     command = 'reload'
     userID = interaction.user.id
     formatOutput(output="/"+command+" Used by ("+str(userID)+")", status="Normal")
-    await interaction.response.defer(with_message=True)
+
+    if interaction.user.guild_permissions.administrator == True: # is Admin
+        await interaction.response.defer(with_message=True)
 
     formatOutput(output="Refreshing Commands", status="Normal")
     for i in extension_command_list:
@@ -188,16 +195,40 @@ async def CommandName(interaction: nextcord.Interaction):
     await interaction.send("Commands Reloaded")
     await save(command, userID, Type="Command")
 
-# ON JOIN
-# Create a "placeholder" user file
-# all is int
-# join_date is a string
+### Passive Commands 
+# Member Join
+@bot.event
+async def on_member_join(member: nextcord.Member):
+    userID = member.id
+    channel = bot.get_channel(739608668152135773)
+    await channel.send("Welcome to Catotron's World, <@"+str(userID)+"> !")
+    formatOutput(output="Member Joined: "+str(member)+" | ID: "+str(userID), status="Normal")
+    formatOutput(output="    Checking for existing user profile...", status="Normal")
 
-# @bot.event()
-# async def on_member_join(member: nextcord.Member):
-#     userID = member.id
-#     formatOutput(output="", status="")
+    try: # check for existing profile
+        data = db_user_data.find_one({"userID": userID})
+        if data is not None: formatOutput(output="    User already has a profile!", status="Warning")
+            
+        else: # Create user profile
+            try: 
+                join_date = member.joined_at.strftime("%d-%m-%Y %H:%M:%S")
+                db_user_data.insert_one(
+                {"userID": userID,
+                "join_date": join_date,
+                "messages_sent": 0,
+                "commands_sent": 0})
+                formatOutput(output="    Successful Creation of user profile for "+str(userID), status="Good")
+            except Exception as e: formatOutput(output="    Failed to Create user profile // Error: "+str(e), status="Error")
+    except Exception as e: formatOutput(output="    Failed to Check for user profile // Error: "+str(e), status="Error")
 
-# perk tree for leveling????
+# on message
+@bot.event
+async def on_message(message: nextcord.message): # waits for message
+    if message.Message.author.bot: # ignores itself (bot)
+        pass
+    else: # user message
+        userID = message.Message.author.id
+        await updateUserData(userID, Type="Message")
+###
 
 bot.run(bot_token)

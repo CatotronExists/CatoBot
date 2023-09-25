@@ -1,7 +1,7 @@
 import nextcord
 import datetime
 from nextcord.ext import commands
-from Main import formatOutput, save, guild_ID
+from Main import formatOutput, save, guild_ID, fetchBotStats
 
 class Command_bot_stats_Cog(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -12,7 +12,9 @@ class Command_bot_stats_Cog(commands.Cog):
         command = 'bot_stats'
         userID = interaction.user.id
         formatOutput(output="/"+command+" Used by ("+str(userID)+")", status="Normal")
-        
+        await interaction.response.defer(with_message=True)
+
+        data = fetchBotStats()
         await interaction.send("Bot Stats")
         await save(command, userID, Type="Command")
 
