@@ -1,7 +1,8 @@
 import nextcord
 import datetime
 from nextcord.ext import commands
-from Main import formatOutput, save, guild_ID, fetchBotStats
+from Main import formatOutput, save, guild_ID, start_time
+from Config import version
 
 class Command_bot_stats_Cog(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -14,8 +15,9 @@ class Command_bot_stats_Cog(commands.Cog):
         formatOutput(output="/"+command+" Used by ("+str(userID)+")", status="Normal")
         await interaction.response.defer(with_message=True)
 
-        data = fetchBotStats()
-        await interaction.send("Bot Stats")
+        current_time = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+        uptime = datetime.datetime.strptime(current_time, '%d-%m-%Y %H:%M:%S') - datetime.datetime.strptime(start_time, '%d-%m-%Y %H:%M:%S')
+        await interaction.send("Bot Stats\nCurrent Version: "+str(version)+"\nBot Uptime: "+str(uptime)+" // Online Since "+str(start_time)+" AEST")
         await save(command, userID, Type="Command")
 
 def setup(bot):

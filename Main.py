@@ -85,7 +85,7 @@ def updateUserData(userID, Type):
     data = db_user_data.find_one({"userID": userID})
     join_date = data["join_date"]
 
-    if Type == "Messages": messages_sent = data["messages_sent"] + 1
+    if Type == "Message": messages_sent = data["messages_sent"] + 1
     else: messages_sent = data["messages_sent"]
 
     if Type == "Command": commands_sent = data["commands_sent"] + 1
@@ -110,10 +110,6 @@ def fetch(user, searched_user_id, fetchType):
             data = "Error Encountered when finding data!"
         return data
     elif fetchType == "command": pass
-
-def fetchBotStats():
-    data = 3
-    return data
 
 ### Startup
 error = False
@@ -224,11 +220,12 @@ async def on_member_join(member: nextcord.Member):
 # on message
 @bot.event
 async def on_message(message: nextcord.message): # waits for message
-    if message.Message.author.bot: # ignores itself (bot)
-        pass
-    else: # user message
-        userID = message.Message.author.id
-        await updateUserData(userID, Type="Message")
-###
-
+    try: 
+        if message.author.bot: # ignores itself (bot)
+            pass
+        else: # user message
+            userID = message.author.id
+            updateUserData(userID, Type="Message")
+    except Exception as e: formatOutput(output="    Failed to save message from "+str(userID)+" // Error: "+str(e), status="Warning")
+        
 bot.run(bot_token)
