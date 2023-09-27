@@ -99,17 +99,19 @@ def updateUserData(userID, Type):
     "commands_sent": commands_sent}}
 )
 
-def fetch(user, searched_user_id, fetchType):
-    if fetchType == "user": 
-        try:
-            formatOutput(output="    Finding Data for "+str(user), status="Normal")
-            data = db_user_data.find_one({"userID": searched_user_id})
-            formatOutput(output="    Data Found", status="Good")
-        except Exception as e: 
-            formatOutput(output="    Error Encountered when finding data // Error: "+str(e), status="Error")
-            data = "Error Encountered when finding data!"
-        return data
-    elif fetchType == "command": pass
+def fetchUserData(user, searched_user_id):
+    try:
+        formatOutput(output="    Finding Data for "+str(user), status="Normal")
+        data = db_user_data.find_one({"userID": searched_user_id})
+        formatOutput(output="    Data Found", status="Good")
+    except Exception as e: 
+        formatOutput(output="    Error Encountered when finding data // Error: "+str(e), status="Error")
+        data = "Error Encountered when finding data!"
+    return data
+
+def fetchBotData():
+    data = db_bot_stats.find_one({"Commands_Used": {"$exists": True}})
+    return data
 
 ### Startup
 error = False
@@ -180,16 +182,21 @@ async def CommandName(interaction: nextcord.Interaction):
     if interaction.user.guild_permissions.administrator == True: # is Admin
         await interaction.response.defer(with_message=True)
 
-    formatOutput(output="Refreshing Commands", status="Normal")
-    for i in extension_command_list:
-        try: 
-            bot.reload_extension("Commands."+i)
-            formatOutput(output="    /"+i+" Successfully Refreshed", status="Good")
-        except Exception as e: 
-            formatOutput(output="    /"+i+" Failed to Reload // Error: "+str(e), status="Warning")
+        formatOutput(output="Refreshing Commands", status="Normal")
+        for i in extension_command_list:
+            try: 
+                bot.reload_extension("Commands."+i)
+                formatOutput(output="    /"+i+" Successfully Refreshed", status="Good")
+            except Exception as e: 
+                formatOutput(output="    /"+i+" Failed to Reload // Error: "+str(e), status="Warning")
 
-    await interaction.send("Commands Reloaded")
-    await save(command, userID, Type="Command")
+        await interaction.send("Commands Reloaded")
+        await save(command, userID, Type="Command")
+
+    else: # not Admin
+        await interaction.send("Insufficient Permissions\nMissing Administrator Permissions")
+        await save(command, userID, Type="Command")
+        formatOutput(output="    Insufficient Permissions for "+str(userID), status="Warning")
 
 ### Passive Commands 
 # Member Join

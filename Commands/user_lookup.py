@@ -1,7 +1,6 @@
 import nextcord
-import datetime
 from nextcord.ext import commands
-from Main import formatOutput, save, guild_ID, fetch
+from Main import formatOutput, save, guild_ID, fetchUserData
 
 class Command_user_lookup_Cog(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -15,7 +14,7 @@ class Command_user_lookup_Cog(commands.Cog):
         await interaction.response.defer(with_message=True)
         searched_user_id = user.id
 
-        data = fetch(user, searched_user_id, fetchType="user")
+        data = fetchUserData(user, searched_user_id)
         try: # Data Found
             join_date = data["join_date"]
             messages_sent = data["messages_sent"]
