@@ -5,8 +5,8 @@ import datetime
 import nextcord
 from nextcord import Interaction, SlashOption
 from nextcord.ext import commands
-from Config import version, guild_ID, db_bot_stats, db_user_data
-from Keys import bot_token, client, dev_mode
+from Config import version, guild_ID, db_bot_stats, db_user_data, db_bot_setup
+from Keys import bot_token, client, dev_mode, self_host
 import pymongo
 #         #
 
@@ -21,10 +21,6 @@ CYELLOW = '\33[93m'
 CBEIGE = '\33[36m'
 CBOLD = '\033[1m'
 #                 #
-
-# Issues
-#startup prints twice
-#/shutdown also loads all commands again
 
 # Vars #
 extension_command_list = ["bot_stats", "user_lookup", "command_leaderboard"]
@@ -113,8 +109,38 @@ def fetchBotData():
     data = db_bot_stats.find_one({"Commands_Used": {"$exists": True}})
     return data
 
-### Startup
-error = False
+### Startup ### DUE TO DOUBLE STARTUP, THIS WONT WORK
+# if self_host == True: error = False # Hosted Locally
+# else: # Using hosting Serivce
+#     print("Checking for last mode")
+#     result = db_bot_setup.find_one({"last_mode": {"$exists": True}})
+#     if result is not None: 
+#         mode = result["last_mode"]
+#         print("Bot was last "+mode)
+
+#         if mode == "ONLINE":
+#             error = True
+#             print("Bot was last online, Turning OFF")
+#             db_bot_setup.update_one(
+#                 {"last_mode": "ONLINE"}, # find
+#                 {"$set": {"last_mode": "OFFLINE"}} # set
+#             )   
+
+#         elif mode == "OFFLINE": 
+#             error = False
+#             print("Bot was last offline, Turning ON")
+#             db_bot_setup.update_one(
+#                 {"last_mode": "OFFLINE"}, # find
+#                 {"$set": {"last_mode": "ONLINE"}} # set
+#             )   
+    
+#     else: 
+#         print("Could not find last status...Setting to ONLINE")
+#         error = False
+#         db_bot_setup.insert_one(
+#             {"last_mode": "ONLINE"}
+#         )
+
 startup_start_time = datetime.datetime.now().strftime('%M:%S.%f')[:-3]
 start_time = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
 print("<<<------ Catobot "+str(version)+" Terminal ------>>>")
@@ -129,7 +155,7 @@ except Exception as e:
     print(e)
     input(CRED + "    There was an error connecting to MongoDB\nError: " + str(e) + CLEAR)
 
-if error == True: ready = False # END if no connection
+if error == True: error == True # END if no connection
 else:
     print(CBLUE + "--------------------------" + CLEAR)
     print("Bot is starting up...")

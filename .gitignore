@@ -1,9 +1,6 @@
 # Python Cache
 **/__pycache__
 
-# old files
-**/old
-
 # Keys / Passwords
 *Keys.py
 

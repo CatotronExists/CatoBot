@@ -15,6 +15,7 @@ class Command_command_leaderboard_Cog(commands.Cog):
         await interaction.response.defer(with_message=True)
 
         data = fetchBotData()
+        
         if data is not None:
             leaderboard_data = []
             for field_name, value in data.items():
@@ -27,6 +28,7 @@ class Command_command_leaderboard_Cog(commands.Cog):
         for i in range(len(leaderboard_data)):
             leaderboard_data[i] = "/"+leaderboard_data[i] # add slash
             leaderboard_data[i] = leaderboard_data[i].replace('_usage', ' usage') # change x_usage to x usage
+            leaderboard_data[i] = leaderboard_data[i].replace(' : ', ': ') # push ':' next to usage
         await interaction.send("Command Leaderboard for Catotron's World\n"+'\n'.join(leaderboard_data))
 
         await save(command, userID, Type="Command")
