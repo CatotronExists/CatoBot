@@ -155,7 +155,7 @@ except Exception as e:
     print(e)
     input(CRED + "    There was an error connecting to MongoDB\nError: " + str(e) + CLEAR)
 
-if error == True: error == True # END if no connection
+if error == True: error == True # END if no connection 
 else:
     print(CBLUE + "--------------------------" + CLEAR)
     print("Bot is starting up...")
