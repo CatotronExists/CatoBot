@@ -8,6 +8,7 @@ from nextcord.ext import commands
 from Config import version, guild_ID, db_bot_stats, db_user_data, db_bot_setup
 from Keys import bot_token, client, dev_mode, self_host
 import pymongo
+import random
 #         #
 
 # Terminal Colors #
@@ -91,13 +92,26 @@ def updateUserData(userID, Type):
     if Type == "Command": commands_sent = data["commands_sent"] + 1
     else: commands_sent = data["commands_sent"]
 
+    level = data["level_stats"]["level"]
+    xp = data["level_stats"]["xp"]
+    skill_tree_progress = data["level_stats"]["skill_tree_progress"]
+    skill_points = data["level_stats"]["skill_points"]
+
     db_user_data.update_one(
-    {"userID": userID},
-    {"$set": {"userID": userID,
-    "join_date": join_date,
-    "messages_sent": messages_sent,
-    "commands_sent": commands_sent}}
-)
+        {"userID": userID},
+        {"$set": {
+            "userID": userID,
+            "join_date": join_date,
+            "messages_sent": messages_sent,
+            "commands_sent": commands_sent,                    
+            "level_stats": {
+                "level": level,
+                "xp": xp,
+                "skill_tree_progress": skill_tree_progress,
+                "skill_points": skill_points
+            }
+        }}
+    )
 
 def fetchUserData(user, searched_user_id):
     try:
@@ -112,6 +126,46 @@ def fetchUserData(user, searched_user_id):
 def fetchBotData():
     data = db_bot_stats.find_one({"Commands_Used": {"$exists": True}})
     return data
+
+def updateXP(userID):
+    ### Level Requirements
+    level_xp_requirements = [0, 10, 40, 80, 150, 250, 350, 450, 550]
+    #                        0   1   2   3    4    5    6    7    8
+
+    data = db_user_data.find_one({"userID": userID})
+    join_date = data["join_date"]
+    messages_sent = data["messages_sent"]
+    commands_sent = data["commands_sent"]
+    level = data["level_stats"]["level"]
+    xp = data["level_stats"]["xp"]
+    skill_tree_progress = data["level_stats"]["skill_tree_progress"]
+    skill_points = data["level_stats"]["skill_points"]
+
+    # xp calculation
+    xp_gain = random.randint(1, 5)
+    xp = xp + xp_gain
+    print("gained "+str(xp_gain)+" xp")
+    if xp >= level_xp_requirements[level+1]: # level up
+        level += 1
+        skill_points += 1
+        xp = 0
+        formatOutput(output="Level Up! "+str(userID)+" is now level "+str(level), status="Good")
+
+    db_user_data.update_one(
+        {"userID": userID},
+        {"$set": {
+            "userID": userID,
+            "join_date": join_date,
+            "messages_sent": messages_sent,
+            "commands_sent": commands_sent,                    
+            "level_stats": {
+                "level": level,
+                "xp": xp,
+                "skill_tree_progress": skill_tree_progress,
+                "skill_points": skill_points
+            }
+        }}
+    )
 
 ### Startup
 if self_host == True: error = False # Hosted Locally
@@ -263,6 +317,7 @@ async def on_message(message: nextcord.message): # waits for message
         else: # user message
             userID = message.author.id
             updateUserData(userID, Type="Message")
+            updateXP(userID)
     except Exception as e: formatOutput(output="    Failed to save message from "+str(userID)+" // Error: "+str(e), status="Warning")
 
 bot.run(bot_token)
