@@ -4,21 +4,6 @@ from nextcord.ext import commands
 from Main import formatOutput, save, guild_ID
 from Config import db_user_data
 
-# {username}, Level {level}, {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked
-# |_ Reaction Perms     _ Custom Color            __
-# |_ Image Perms       /                         |
-# |  |________________|     _ Embed Perms        |
-# |_ 1.25xp Multi      \___|_____________________|__
-# ==================================================
-# [ 0 ]~~~~~[ 1 ]~~~~~[ 2 ]~~~~~[ 3 ]~~~~~[ 4 ]~~--[ 5 ]
-# ==================================================
-# {xp} xp until level {next_level}, You have {skill_points} skill points to spend.
-
-
-# [ 1 ]
-# [1 0]
-# [100]
-
 class Command_skill_tree_Cog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -47,14 +32,13 @@ class Command_skill_tree_Cog(commands.Cog):
         next_level = level + 1
         next_level_percentage = int((xp / level_xp_requirements[next_level]) * 100)
 
-        skill_tree_page_1 = f"{username}, Level {level} | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n|_ Reaction Perms   _ Custom Color              __\n|_ Image Perms   /                             |\n|  |________________|   _ Embed Perms         |\n|_ 1.25xp Multi    \\___|_________________|__\n=================================================== \n[ 0 ]-----[ 1 ]-----[ 2 ]-----[ 3 ]-----[ 4 ]-----[ 5 ]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend."
-        skill_tree_edit0 = skill_tree_page_1.replace("-", "~", int((level*5)+(next_level_percentage/20))) # progress bar updater, level x 5 + % to next level (in 20% increments)
+        skill_tree_page_1 = f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n|_ Reaction Perms   _ Custom Color              __\n|_ Image Perms   /                             |\n|  |________________|   _ Embed Perms         |\n|_ 1.25xp Multi    \\___|_________________|__\n=================================================== \n[ 0 ]-----[ 1 ]-----[ 2 ]-----[ 3 ]-----[ 4 ]-----[ 5 ]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend."
+        skill_tree_edit0 = skill_tree_page_1.replace("-", "~", int((level*5)+(int(next_level_percentage)/20))) # progress bar updater, level x 5 + % to next level (in 20% increments)
 
         skill_tree_edit1 = skill_tree_edit0.replace("_", "\_")
         skill_tree_edit2 = skill_tree_edit1.replace("~", "\~")
         await interaction.send(skill_tree_edit2)
 
-        
         await save(command, userID, Type="Command")
 
 def setup(bot):

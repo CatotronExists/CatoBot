@@ -144,7 +144,6 @@ def updateXP(userID):
     # xp calculation
     xp_gain = random.randint(1, 5)
     xp = xp + xp_gain
-    print("gained "+str(xp_gain)+" xp")
     if xp >= level_xp_requirements[level+1]: # level up
         level += 1
         skill_points += 1
@@ -168,42 +167,11 @@ def updateXP(userID):
     )
 
 ### Startup
-if self_host == True: error = False # Hosted Locally
-else: # Using hosting Serivce
-    print("Checking for last mode")
-    result = db_bot_setup.find_one({"last_mode": {"$exists": True}})
-    if result is not None: 
-        mode = result["last_mode"]
-        print("Bot was last")
-        if mode == "ONLINE":
-            error = True
-            print("Bot was last online, Turning OFF")
-            db_bot_setup.update_one(
-                {"last_mode": "ONLINE"}, # find
-                {"$set": {"last_mode": "OFFLINE"}} # set
-            )   
-
-        elif mode == "OFFLINE": 
-            error = False
-            print("Bot was last offline, Turning ON")
-            db_bot_setup.update_one(
-                {"last_mode": "OFFLINE"}, # find
-                {"$set": {"last_mode": "ONLINE"}} # set
-            )   
-    
-    else: 
-        error = False
-        print("Could not find last status...Setting to ONLINE")
-        db_bot_setup.insert_one(
-            {"last_mode": "ONLINE"}
-        )
-
-if error == False:
-    startup_start_time = datetime.datetime.now().strftime('%M:%S.%f')[:-3]
-    start_time = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
-    print("<<<------ Catobot "+str(version)+" Terminal ------>>>")
-    print(CBLUE +"Current Time: "+str(start_time)+ CLEAR)
-    print(CYELLOW +"Connecting to MongoDB..."+ CLEAR)
+startup_start_time = datetime.datetime.now().strftime('%M:%S.%f')[:-3]
+start_time = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+print("<<<------ Catobot "+str(version)+" Terminal ------>>>")
+print(CBLUE +"Current Time: "+str(start_time)+ CLEAR)
+print(CYELLOW +"Connecting to MongoDB..."+ CLEAR)
 
 try: # Ping MongoDB
     client.admin.command('ping')
