@@ -23,8 +23,8 @@ CBOLD = '\033[1m'
 #                 #
 
 # Vars #
-extension_command_list = ["bot_stats", "user_lookup", "command_leaderboard"]
-full_command_list = ["shutdown", "reload", "bot_stats", "user_lookup", "command_leaderboard"]
+extension_command_list = ["bot_stats", "user_lookup", "command_leaderboard", "skill_tree"]
+full_command_list = ["shutdown", "reload", "bot_stats", "user_lookup", "command_leaderboard", "skill_tree"]
 #      #
 
 ### Discord Setup
@@ -63,7 +63,10 @@ def updateCommandUsage(command):
 
         if command == "command_leaderboard": command_leaderboard_usage = data["command_leaderboard_usage"] + 1
         else: command_leaderboard_usage = data["command_leaderboard_usage"]
-        
+
+        if command == "skill_tree": skill_tree_usage = data["skill_tree_usage"] + 1
+        else: skill_tree_usage = data["skill_tree_usage"]
+
         db_bot_stats.update_one(
             {"Commands_Used": {"$exists": True}},
             {"$set": {"Commands_Used": Commands_Used,
@@ -71,7 +74,8 @@ def updateCommandUsage(command):
             "reload_usage": reload_usage,
             "bot_stats_usage": bot_stats_usage,
             "user_lookup_usage": user_lookup_usage,
-            "command_leaderboard_usage": command_leaderboard_usage}}
+            "command_leaderboard_usage": command_leaderboard_usage,
+            "skill_tree_usage": skill_tree_usage}}
         )
         formatOutput(output="    Command Usage Successfully Saved", status="Good")
 
@@ -109,43 +113,43 @@ def fetchBotData():
     data = db_bot_stats.find_one({"Commands_Used": {"$exists": True}})
     return data
 
-### Startup ### DUE TO DOUBLE STARTUP, THIS WONT WORK
-# if self_host == True: error = False # Hosted Locally
-# else: # Using hosting Serivce
-#     print("Checking for last mode")
-#     result = db_bot_setup.find_one({"last_mode": {"$exists": True}})
-#     if result is not None: 
-#         mode = result["last_mode"]
-#         print("Bot was last "+mode)
+### Startup
+if self_host == True: error = False # Hosted Locally
+else: # Using hosting Serivce
+    print("Checking for last mode")
+    result = db_bot_setup.find_one({"last_mode": {"$exists": True}})
+    if result is not None: 
+        mode = result["last_mode"]
+        print("Bot was last")
+        if mode == "ONLINE":
+            error = True
+            print("Bot was last online, Turning OFF")
+            db_bot_setup.update_one(
+                {"last_mode": "ONLINE"}, # find
+                {"$set": {"last_mode": "OFFLINE"}} # set
+            )   
 
-#         if mode == "ONLINE":
-#             error = True
-#             print("Bot was last online, Turning OFF")
-#             db_bot_setup.update_one(
-#                 {"last_mode": "ONLINE"}, # find
-#                 {"$set": {"last_mode": "OFFLINE"}} # set
-#             )   
-
-#         elif mode == "OFFLINE": 
-#             error = False
-#             print("Bot was last offline, Turning ON")
-#             db_bot_setup.update_one(
-#                 {"last_mode": "OFFLINE"}, # find
-#                 {"$set": {"last_mode": "ONLINE"}} # set
-#             )   
+        elif mode == "OFFLINE": 
+            error = False
+            print("Bot was last offline, Turning ON")
+            db_bot_setup.update_one(
+                {"last_mode": "OFFLINE"}, # find
+                {"$set": {"last_mode": "ONLINE"}} # set
+            )   
     
-#     else: 
-#         print("Could not find last status...Setting to ONLINE")
-#         error = False
-#         db_bot_setup.insert_one(
-#             {"last_mode": "ONLINE"}
-#         )
+    else: 
+        error = False
+        print("Could not find last status...Setting to ONLINE")
+        db_bot_setup.insert_one(
+            {"last_mode": "ONLINE"}
+        )
 
-startup_start_time = datetime.datetime.now().strftime('%M:%S.%f')[:-3]
-start_time = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
-print("<<<------ Catobot "+str(version)+" Terminal ------>>>")
-print(CBLUE +"Current Time: "+str(start_time)+ CLEAR)
-print(CYELLOW +"Connecting to MongoDB..."+ CLEAR)
+if error == False:
+    startup_start_time = datetime.datetime.now().strftime('%M:%S.%f')[:-3]
+    start_time = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+    print("<<<------ Catobot "+str(version)+" Terminal ------>>>")
+    print(CBLUE +"Current Time: "+str(start_time)+ CLEAR)
+    print(CYELLOW +"Connecting to MongoDB..."+ CLEAR)
 
 try: # Ping MongoDB
     client.admin.command('ping')
@@ -155,7 +159,7 @@ except Exception as e:
     print(e)
     input(CRED + "    There was an error connecting to MongoDB\nError: " + str(e) + CLEAR)
 
-if error == True: error == True # END if no connection 
+if error == True: ready = False # END if no connection
 else:
     print(CBLUE + "--------------------------" + CLEAR)
     print("Bot is starting up...")
@@ -260,5 +264,5 @@ async def on_message(message: nextcord.message): # waits for message
             userID = message.author.id
             updateUserData(userID, Type="Message")
     except Exception as e: formatOutput(output="    Failed to save message from "+str(userID)+" // Error: "+str(e), status="Warning")
-        
+
 bot.run(bot_token)
