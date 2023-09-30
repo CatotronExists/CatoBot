@@ -129,8 +129,8 @@ def fetchBotData():
 
 def updateXP(userID):
     ### Level Requirements
-    level_xp_requirements = [0, 10, 40, 80, 150, 250, 350, 450, 550]
-    #                        0   1   2   3    4    5    6    7    8
+    level_xp_requirements = [0, 10, 40, 80, 150, 250, 350, 450, 550, 650, 750, 850, 950, 1050, 1150, 1250, 1350, 1450, 1550, 1650, 1750]
+    #                        0   1   2   3    4    5    6    7    8    9   10   11   12    13    14    15    16    17    18    19    20
 
     data = db_user_data.find_one({"userID": userID})
     join_date = data["join_date"]
@@ -176,6 +176,7 @@ print(CYELLOW +"Connecting to MongoDB..."+ CLEAR)
 try: # Ping MongoDB
     client.admin.command('ping')
     print(CGREEN + "    Successfully connected to MongoDB" + CLEAR)
+    error = False
 except Exception as e:
     error = True
     print(e)
@@ -268,10 +269,19 @@ async def on_member_join(member: nextcord.Member):
             try: 
                 join_date = member.joined_at.strftime("%d-%m-%Y %H:%M:%S")
                 db_user_data.insert_one(
-                {"userID": userID,
-                "join_date": join_date,
-                "messages_sent": 0,
-                "commands_sent": 0})
+                    {"userID": userID,
+                    "join_date": join_date,
+                    "messages_sent": 0,
+                    "commands_sent": 0,                    
+                    "level_stats": {
+                        "level": 0,
+                        "xp": 0,
+                        "skill_tree_progress": 0,
+                        "skill_points": 0
+                        }
+                    }
+                )
+
                 formatOutput(output="    Successful Creation of user profile for "+str(userID), status="Good")
             except Exception as e: formatOutput(output="    Failed to Create user profile // Error: "+str(e), status="Error")
     except Exception as e: formatOutput(output="    Failed to Check for user profile // Error: "+str(e), status="Error")
