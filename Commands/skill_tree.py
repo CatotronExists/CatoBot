@@ -4,18 +4,52 @@ from nextcord.ext import commands
 from Main import formatOutput, save, guild_ID
 from Config import db_user_data
 
+def updateSkillData(userID, skill_purchased):
+    formatOutput(output="Skill ["+str(skill_purchased)+"] Purchased by ("+str(userID)+")", status="Normal")
+
+    data = db_user_data.find_one({"userID": userID})
+    join_date = data["join_date"]
+    messages_sent = data["messages_sent"]
+    commands_sent = data["commands_sent"]
+    level = data["level_stats"]["level"]
+    xp = data["level_stats"]["xp"]
+    skill_tree_progress = data["level_stats"]["skill_tree_progress"]
+    skill_points = data["level_stats"]["skill_points"] - 1
+    purchased_nodes = data["level_stats"]["purchased_nodes"]
+    purchased_nodes.append(skill_purchased)
+    purchased_nodes.sort()
+
+    db_user_data.update_one(
+        {"userID": userID},
+        {"$set": {
+            "userID": userID,
+            "join_date": join_date,
+            "messages_sent": messages_sent,
+            "commands_sent": commands_sent,                    
+            "level_stats": {
+                "level": level,
+                "xp": xp,
+                "skill_tree_progress": skill_tree_progress,
+                "skill_points": skill_points,
+                "purchased_nodes": purchased_nodes
+            }
+        }}
+    )
+    formatOutput(output="    Saved Purchase of ["+str(skill_purchased)+"] by ("+str(userID)+")", status="Good")
+
 def changePage(direction):
     ### Level Requirements
     level_xp_requirements = [0, 10, 40, 80, 150, 250, 350, 450, 550, 650, 750, 850, 950, 1050, 1150, 1250, 1350, 1450, 1550, 1650, 1750]
     #                        0   1   2   3    4    5    6    7    8    9   10   11   12    13    14    15    16    17    18    19    20
         
     # get user data
+    global skill_points, purchased_nodes
     data = db_user_data.find_one({"userID": userID})
     level = data["level_stats"]["level"]
     xp = data["level_stats"]["xp"]
     skill_tree_progress = data["level_stats"]["skill_tree_progress"]
     skill_points = data["level_stats"]["skill_points"]
-    # purchased_nodes = data["level_stats"]["purchased_nodes"]
+    purchased_nodes = data["level_stats"]["purchased_nodes"]
 
     # Skill Tree Calculations
     max_skill_tree_progress = 100
@@ -97,8 +131,9 @@ class purchase_dropdown_view(nextcord.ui.View):
 
 class purchase_dropdown(nextcord.ui.Select):
     def __init__(self):
-        skills = [["Reaction Perms", "Image Perms", "1.25xp Multi", "Custom Color", "Embed Perms"], ["placeholder"]]
-        # Set No.   0                                                                                 1
+        global skills
+        skills = [["Index Setter", "Reaction Perms", "Image Perms", "1.25xp Multi", "Custom Color", "Embed Perms"], ["Index Setter", "placeholder"], ["Index Setter", "placeholder"]]
+        # Set No.  0                                                                                      1                     2
 
         options = []
         for i in skills[page]: # builds dropdown options
@@ -110,8 +145,17 @@ class purchase_dropdown(nextcord.ui.Select):
     
     async def callback(self, interaction: nextcord.Interaction):
         if interaction.user.id == userID:
-            message = changePage(direction="none")
-            await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
+            if skill_points > 0: # has skill points
+                if self.values[0] != "Close": # save if chose skill
+                    skill_purchased = "1."+ str(skills[page].index(self.values[0])) # get index of skill (eg. 1.1)
+                    skill_purchased = float(skill_purchased)
+                    updateSkillData(userID, skill_purchased=skill_purchased)
+                message = changePage(direction="none")
+                await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
+            else: # no skill points
+                message = changePage(direction="none") 
+                await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
+                if self.values[0] != "Close": await interaction.followup.send("You don't have any skill points to spend.", ephemeral=True)
 
 class Command_skill_tree_Cog(commands.Cog):
     def __init__(self, bot: commands.Bot):

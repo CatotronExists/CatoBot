@@ -96,6 +96,7 @@ def updateUserData(userID, Type):
     xp = data["level_stats"]["xp"]
     skill_tree_progress = data["level_stats"]["skill_tree_progress"]
     skill_points = data["level_stats"]["skill_points"]
+    purchased_nodes = data["level_stats"]["purchased_nodes"]
 
     db_user_data.update_one(
         {"userID": userID},
@@ -108,7 +109,8 @@ def updateUserData(userID, Type):
                 "level": level,
                 "xp": xp,
                 "skill_tree_progress": skill_tree_progress,
-                "skill_points": skill_points
+                "skill_points": skill_points,
+                "purchased_nodes": purchased_nodes
             }
         }}
     )
@@ -140,6 +142,7 @@ def updateXP(userID):
     xp = data["level_stats"]["xp"]
     skill_tree_progress = data["level_stats"]["skill_tree_progress"]
     skill_points = data["level_stats"]["skill_points"]
+    purchased_nodes = data["level_stats"]["purchased_nodes"]
 
     # xp calculation
     xp_gain = random.randint(1, 5)
@@ -148,7 +151,7 @@ def updateXP(userID):
         level += 1
         skill_points += 1
         xp = 0
-        formatOutput(output="Level Up! "+str(userID)+" is now level "+str(level), status="Good")
+        formatOutput(output="Level Up! "+str(userID)+" is now level "+str(level), status="Normal")
 
     db_user_data.update_one(
         {"userID": userID},
@@ -161,7 +164,8 @@ def updateXP(userID):
                 "level": level,
                 "xp": xp,
                 "skill_tree_progress": skill_tree_progress,
-                "skill_points": skill_points
+                "skill_points": skill_points,
+                "purchased_nodes": purchased_nodes
             }
         }}
     )
@@ -277,7 +281,8 @@ async def on_member_join(member: nextcord.Member):
                         "level": 0,
                         "xp": 0,
                         "skill_tree_progress": 0,
-                        "skill_points": 0
+                        "skill_points": 0,
+                        "purchased_nodes": [0]
                         }
                     }
                 )
