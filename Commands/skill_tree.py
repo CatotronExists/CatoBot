@@ -15,6 +15,7 @@ def changePage(direction):
     xp = data["level_stats"]["xp"]
     skill_tree_progress = data["level_stats"]["skill_tree_progress"]
     skill_points = data["level_stats"]["skill_points"]
+    # purchased_nodes = data["level_stats"]["purchased_nodes"]
 
     # Skill Tree Calculations
     max_skill_tree_progress = 100
@@ -27,21 +28,24 @@ def changePage(direction):
     ### Pages
     global skill_tree_pages
     skill_tree_pages = [
-    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n|_ Reaction Perms   _ Custom Color              __\n|_ Image Perms   /                             |\n|  |________________|   _ Embed Perms         |\n|_ 1.25xp Multi    \\___|_________________|__\n=================================================== \n[ 0 ]-----[ 1 ]-----[ 2 ]-----[ 3 ]-----[ 4 ]-----[ 5 ]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend.",
-    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n|_ Reaction Perms   _ Custom Color              __\n|_ Image Perms   /                             |\n|  |________________|   _ Embed Perms         |\n|_ 1.25xp Multi    \\___|_________________|__\n=================================================== \n[ 6 ]-----[ 7 ]-----[ 8 ]-----[ 9 ]-----[1 0]-----[1 1]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend.",
-    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n|_ Reaction Perms   _ Custom Color              __\n|_ Image Perms   /                             |\n|  |________________|   _ Embed Perms         |\n|_ 1.25xp Multi    \\___|_________________|__\n=================================================== \n[1 2]-----[1 3]-----[1 4]-----[1 5]-----[1 6]-----[1 7]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend."
+    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n|_ Reaction Perms   _ Custom Color              _________\n|_ Image Perms   /                             |\n|  |________________|   _ Embed Perms         |\n|_ 1.25xp Multi    \\___|_________________|_________\n=================================================== \n[ 0 ]-----[ 1 ]-----[ 2 ]-----[ 3 ]-----[ 4 ]-----[ 5 ]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend.",
+    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n|_ Reaction Perms   _ Custom Color              _________\n|_ Image Perms   /                             |\n|  |________________|   _ Embed Perms         |\n|_ 1.25xp Multi    \\___|_________________|_________\n=================================================== \n[ 6 ]-----[ 7 ]-----[ 8 ]-----[ 9 ]-----[1 0]-----[1 1]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend.",
+    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n|_ Reaction Perms   _ Custom Color              _________\n|_ Image Perms   /                             |\n|  |________________|   _ Embed Perms         |\n|_ 1.25xp Multi    \\___|_________________|_________\n=================================================== \n[1 2]-----[1 3]-----[1 4]-----[1 5]-----[1 6]-----[1 7]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend."
     ]
 
-    if direction == "main": 
+    if direction == "main":
         page = main_page
         return correct(level, next_level_percentage, message=skill_tree_pages[page])
 
-    elif direction == "next": 
+    elif direction == "next":
         page += 1
         return correct(level, next_level_percentage, message=skill_tree_pages[page])
     
-    elif direction == "prev": 
+    elif direction == "prev":
         page -= 1
+        return correct(level, next_level_percentage, message=skill_tree_pages[page])
+
+    elif direction == "none":
         return correct(level, next_level_percentage, message=skill_tree_pages[page])
 
 def correct(level, next_level_percentage, message):
@@ -50,80 +54,64 @@ def correct(level, next_level_percentage, message):
     message = message.replace("~", "\~")
     return message
 
-class skill_tree_view(nextcord.ui.View):
+class skill_tree_view(nextcord.ui.View): # Skill Tree View
     def __init__(self, interaction: nextcord.Interaction):
         super().__init__(timeout=None)
         self.interaction = interaction
 
     @nextcord.ui.button(label="Back", style=nextcord.ButtonStyle.red, custom_id="skill_tree:back")
     async def back(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
-        if interaction.user.id == self.interaction.user.id: # Command user
-            if page != 0: 
+        if interaction.user.id == userID: # Command user
+            if page != 0:
                 message = changePage(direction="prev")
                 await interaction.response.edit_message(content=message, view=self) # wont work on page 0
     
     @nextcord.ui.button(label="Reset", style=nextcord.ButtonStyle.blurple, custom_id="skill_tree:reset")
     async def reset(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
-        if interaction.user.id == self.interaction.user.id: # Command user
-            if page != main_page: 
+        if interaction.user.id == userID: # Command user
+            if page != main_page:
                 message = changePage(direction="main")
                 await interaction.response.edit_message(content=message, view=self) # wont if already on main page
 
     @nextcord.ui.button(label="Next", style=nextcord.ButtonStyle.green, custom_id="skill_tree:next")
     async def next(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
-        if interaction.user.id == self.interaction.user.id: # Command user
-            if page != 2: 
+        if interaction.user.id == userID: # Command user
+            if page != 2:
                 message = changePage(direction="next")
                 await interaction.response.edit_message(content=message, view=self) # wont work on last page
     
     @nextcord.ui.button(label="Buy Skills", style=nextcord.ButtonStyle.green, custom_id="skill_tree:buy")
     async def buy(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
-        if interaction.user.id == self.interaction.user.id: # Command user
-            message = message
-            await interaction.response.edit_message(content="Buy Skills", view=skill_tree_buy_view)
-    
+        if interaction.user.id == userID: # Command user
+            await interaction.response.edit_message(view=purchase_dropdown_view(interaction))
+
     @nextcord.ui.button(label="Close", style=nextcord.ButtonStyle.red, custom_id="skill_tree:close")
     async def close(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
-        if interaction.user.id == self.interaction.user.id: # Command user
-            await interaction.response.edit_message(content="Close", view=None)
-
-class skill_tree_buy_view(nextcord.ui.View):
+        if interaction.user.id == userID: # Command user
+            await interaction.response.edit_message(view=None)
+    
+class purchase_dropdown_view(nextcord.ui.View):
     def __init__(self, interaction: nextcord.Interaction):
         super().__init__(timeout=None)
-        self.interaction = interaction
+        self.add_item(purchase_dropdown())
+
+class purchase_dropdown(nextcord.ui.Select):
+    def __init__(self):
+        skills = [["Reaction Perms", "Image Perms", "1.25xp Multi", "Custom Color", "Embed Perms"], ["placeholder"]]
+        # Set No.   0                                                                                 1
+
+        options = []
+        for i in skills[page]: # builds dropdown options
+            i = nextcord.SelectOption(label=i, value=i)
+            options.append(i)
+        options.append(nextcord.SelectOption(label="Close", value="Close")) # add close to each dropdown
+
+        super().__init__(placeholder="Select a skill to buy", min_values=1, max_values=1, options=options)
     
-    @nextcord.ui.button(label="Back", style=nextcord.ButtonStyle.red, custom_id="skill_tree_buy:back")
-    async def back(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
-        if interaction.user.id == self.interaction.user.id:
-            await interaction.response.edit_message(content="Back", view=self)
-        
-    @nextcord.ui.button(label="Reset", style=nextcord.ButtonStyle.blurple, custom_id="skill_tree_buy:reset")
-    async def reset(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
-        if interaction.user.id == self.interaction.user.id:
-            await interaction.response.edit_message(content="Reset", view=self)
-        
-    @nextcord.ui.button(label="Next", style=nextcord.ButtonStyle.green, custom_id="skill_tree_buy:next")
-    async def next(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
-        if interaction.user.id == self.interaction.user.id:
-            await interaction.response.edit_message(content="Next", view=self)
-    
-    @nextcord.ui.button(label="Buy", style=nextcord.ButtonStyle.green, custom_id="skill_tree_buy:buy")
-    async def buy(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
-        if interaction.user.id == self.interaction.user.id:
-            await interaction.response.edit_message(content="Buy", view=self)
-        
-    # OPEN DROPDOWN WITH OPTIONS ^^^^
-
-
-    @nextcord.ui.button(label="Close", style=nextcord.ButtonStyle.red, custom_id="skill_tree_buy:close")
-    async def close(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
-        if interaction.user.id == self.interaction.user.id:
-            await interaction.response.edit_message(content="Close", view=skill_tree_view)
-    
-
-
-
-    
+    async def callback(self, interaction: nextcord.Interaction):
+        if interaction.user.id == userID:
+            message = changePage(direction="none")
+            await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
 
 class Command_skill_tree_Cog(commands.Cog):
     def __init__(self, bot: commands.Bot):
