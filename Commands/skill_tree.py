@@ -3,7 +3,7 @@ import datetime
 from nextcord.ext import commands
 from Main import formatOutput, save, guild_ID
 from Config import db_user_data
-from Commands.Assets.Skills import skills
+from Commands.Assets.Skills import skills, skill_number
 
 def updateSkillData(userID, skill_purchased):
     formatOutput(output="Skill ["+str(skill_purchased)+"] Purchased by ("+str(userID)+")", status="Normal")
@@ -56,7 +56,7 @@ def changePage(direction):
     purchased_nodes = data["level_stats"]["purchased_nodes"]
 
     # Skill Tree Calculations
-    max_skill_tree_progress = 100 # Total skills
+    max_skill_tree_progress = skill_number
     next_level = level + 1
     next_level_percentage = int((xp / level_xp_requirements[next_level]) * 100)
     
@@ -66,23 +66,22 @@ def changePage(direction):
     ### Pages
     global skill_tree_pages
     skill_tree_pages = [
-    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n|_ Reaction Perms   _ Custom Color              _________\n|_ Image Perms   /                             |\n|  |________________|   _ Embed Perms         |\n|_ 1.25xp Multi    \\___|_________________|_________\n===================================================\n[ 0 ]-----[ 1 ]-----[ 2 ]-----[ 3 ]-----[ 4 ]-----[ 5 ]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend.",
-    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n____CCCCCCCCCCCCCCCC __ _ ____________ FFFFFFFFFFF ___\n     _ AAAAAAAAAAA ___/   \_ DDDDDDDDDDDD _\n____/                /                    //n     \_ BBBBBBBBBB __/         EEEEEEEEE _/\n===================================================\n[ 6 ]-----[ 7 ]-----[ 8 ]-----[ 9 ]-----[1 0]-----[1 1]\n===================================================",
-    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n___ ___________________________________________ ___\n   |_ AAAAAAAAAAAAA             BBBBBBBBBBBBB _|\n     CCCCCCCCCCC _|             |_ DDDDDDDDDDD\n     |_______________________________________|____\n===================================================\n[1 2]-----[1 3]-----[1 4]-----[1 5]-----[1 6]-----[1 7]\n===================================================",
-    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n|_ Reaction Perms   _ Custom Color              _________\n|_ Image Perms   /                             |\n|  |________________|   _ Embed Perms         |\n|_ 1.25xp Multi    \\___|_________________|_________\n===================================================\n[1 2]-----[1 3]-----[1 4]-----[1 5]-----[1 6]-----[1 7]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend."
+    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n|_ Reaction Perms   _ Custom Color              _________\n|_ Small XP Pack  /                              |\n|  |________________|   _ Embed Perms        |\n|_ 1.10xp Multi    \\___|_________________|_________\n===================================================\n[ 0 ]-----[ 1 ]-----[ 2 ]-----[ 3 ]-----[ 4 ]-----[ 5 ]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend.",
+    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n____ Media Perms ________  _  _____ /report Command __\n        __ External Emojis ___/   \_ External Stickers ___\n____/                               /                                              /\n         \\\__ Small XP Pack __/              Talk in Threads ___/\n===================================================\n[ 6 ]-----[ 7 ]-----[ 8 ]-----[ 9 ]-----[1 0]-----[1 1]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend.",
+    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n___ ___________________________________________ ___\n   |_ AAAAAAAAAAAAA             BBBBBBBBBBBBB _|\n     CCCCCCCCCCC _|             |_ DDDDDDDDDDD\n     |_______________________________________|____\n===================================================\n[1 2]-----[1 3]-----[1 4]-----[1 5]-----[1 6]-----[1 7]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend."
     ]
 
 # f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n
-# ____CCCCCCCCCCCCCCCC __ _ ____________ FFFFFFFFFFF ___\n
-#      _ AAAAAAAAAAA ___/   \_ DDDDDDDDDDDD _\n
-# ____/                /                    /\n
-#     \_ BBBBBBBBBB __/         EEEEEEEEE _/\n
+# ____CCCCCCCCCCCCCCCC __ _ ____________ FFFFFFFFFFF ___
+#      _ AAAAAAAAAAA ___/   \_ DDDDDDDDDDDD _
+# ____/                /                    /
+#     \_ BBBBBBBBBB __/         EEEEEEEEE _/
 # ===================================================\n
-# [1 8]-----[1 9]-----[2 0]-----[2 1]-----[2 2]-----[2 3]\n
-# ===================================================
+# [1 8]-----[1 9]-----[2 0] More Comming Soon\n
+# ===================================================\n
+# {level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend.
 ## Incomplete
 ### New levels arent formatted correctly in discord
-
 
     if direction == "main":
         page = main_page
@@ -182,8 +181,9 @@ class purchase_dropdown(nextcord.ui.Select):
                     else: # has enough skill points
                         skill_purchased = float(self.values[0])
                         updateSkillData(userID, skill_purchased)
-                        message = changePage(direction="none")
-                        await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
+                else: # is 'close'
+                    message = changePage(direction="none")
+                    await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
             else: # no skill points
                 message = changePage(direction="none") 
                 await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))

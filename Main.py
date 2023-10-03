@@ -145,7 +145,7 @@ def updateXP(userID):
     purchased_nodes = data["level_stats"]["purchased_nodes"]
 
     # xp calculation
-    xp_gain = random.randint(1, 10)
+    xp_gain = random.randint(100, 1000)
     xp = xp + xp_gain
     if xp >= level_xp_requirements[level+1]: # level up
         level += 1
