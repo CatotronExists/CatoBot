@@ -83,7 +83,9 @@ def changePage(direction):
         return correct(level, next_level_percentage, message=skill_tree_pages[page])
 
 def correct(level, next_level_percentage, message):
-    message = message.replace("-", "~", int((level*5)+(int(next_level_percentage)/20))) # progress bar updater, level x 5 + % to next level (in 20% increments)
+    message = message.replace("-", "~", int(((level * 5)) + (int(next_level_percentage) / 20) - page*25))
+    # Progress Bar Updater, (((level x 5) + (% to next level)) / 20) - (pageNUM x 25) << 'resets' bar every 5 levels
+    #                                 (in 20% increments)^^     ^^(to get 20% 'chunks')
     message = message.replace("_", "\_")
     message = message.replace("~", "\~")
     return message
@@ -136,9 +138,14 @@ class purchase_dropdown(nextcord.ui.Select):
         # Set No.  0                                                                                      1                     2
 
         options = []
-        for i in skills[page]: # builds dropdown options
-            i = nextcord.SelectOption(label=i, value=i)
-            options.append(i)
+        for i, value in enumerate(skills[page]):
+            skill_index = float(str(page)+"."+str(skills[page].index(value)))
+            if skill_index in purchased_nodes: pass # Already purchased
+            elif i == "Index Setter": pass
+            else:
+                skill_index = str(skill_index)
+                i = nextcord.SelectOption(label=value, value=skill_index)
+                options.append(i)
         options.append(nextcord.SelectOption(label="Close", value="Close")) # add close to each dropdown
 
         super().__init__(placeholder="Select a skill to buy", min_values=1, max_values=1, options=options)
@@ -147,9 +154,8 @@ class purchase_dropdown(nextcord.ui.Select):
         if interaction.user.id == userID:
             if skill_points > 0: # has skill points
                 if self.values[0] != "Close": # save if chose skill
-                    skill_purchased = "1."+ str(skills[page].index(self.values[0])) # get index of skill (eg. 1.1)
-                    skill_purchased = float(skill_purchased)
-                    updateSkillData(userID, skill_purchased=skill_purchased)
+                    skill_purchased = float(self.values[0])
+                    updateSkillData(userID, skill_purchased)
                 message = changePage(direction="none")
                 await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
             else: # no skill points
