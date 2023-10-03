@@ -3,6 +3,7 @@ import datetime
 from nextcord.ext import commands
 from Main import formatOutput, save, guild_ID
 from Config import db_user_data
+from Commands.Assets.Skills import skills
 
 def updateSkillData(userID, skill_purchased):
     formatOutput(output="Skill ["+str(skill_purchased)+"] Purchased by ("+str(userID)+")", status="Normal")
@@ -14,7 +15,7 @@ def updateSkillData(userID, skill_purchased):
     level = data["level_stats"]["level"]
     xp = data["level_stats"]["xp"]
 
-    skill_points = data["level_stats"]["skill_points"] - 1
+    skill_points = data["level_stats"]["skill_points"] - skills[page][skill_purchased]["cost"] #(skill_points - cost)
     purchased_nodes = data["level_stats"]["purchased_nodes"]
     purchased_nodes.append(skill_purchased)
     purchased_nodes.sort()
@@ -66,27 +67,22 @@ def changePage(direction):
     global skill_tree_pages
     skill_tree_pages = [
     f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n|_ Reaction Perms   _ Custom Color              _________\n|_ Image Perms   /                             |\n|  |________________|   _ Embed Perms         |\n|_ 1.25xp Multi    \\___|_________________|_________\n===================================================\n[ 0 ]-----[ 1 ]-----[ 2 ]-----[ 3 ]-----[ 4 ]-----[ 5 ]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend.",
-    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n|_ Reaction Perms   _ Custom Color              _________\n|_ Image Perms   /                             |\n|  |________________|   _ Embed Perms         |\n|_ 1.25xp Multi    \\___|_________________|_________\n===================================================\n[ 6 ]-----[ 7 ]-----[ 8 ]-----[ 9 ]-----[1 0]-----[1 1]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend.",
+    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n____CCCCCCCCCCCCCCCC __ _ ____________ FFFFFFFFFFF ___\n     _ AAAAAAAAAAA ___/   \_ DDDDDDDDDDDD _\n____/                /                    //n     \_ BBBBBBBBBB __/         EEEEEEEEE _/\n===================================================\n[ 6 ]-----[ 7 ]-----[ 8 ]-----[ 9 ]-----[1 0]-----[1 1]\n===================================================",
+    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n___ ___________________________________________ ___\n   |_ AAAAAAAAAAAAA             BBBBBBBBBBBBB _|\n     CCCCCCCCCCC _|             |_ DDDDDDDDDDD\n     |_______________________________________|____\n===================================================\n[1 2]-----[1 3]-----[1 4]-----[1 5]-----[1 6]-----[1 7]\n===================================================",
     f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n|_ Reaction Perms   _ Custom Color              _________\n|_ Image Perms   /                             |\n|  |________________|   _ Embed Perms         |\n|_ 1.25xp Multi    \\___|_________________|_________\n===================================================\n[1 2]-----[1 3]-----[1 4]-----[1 5]-----[1 6]-----[1 7]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend."
     ]
 
 # f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n
 # ____CCCCCCCCCCCCCCCC __ _ ____________ FFFFFFFFFFF ___\n
 #      _ AAAAAAAAAAA ___/   \_ DDDDDDDDDDDD _\n
-# ____/                /\n                  /
-#     \_ BBBBBBBBBB __/\n       EEEEEEEEE _/
+# ____/                /                    /\n
+#     \_ BBBBBBBBBB __/         EEEEEEEEE _/\n
 # ===================================================\n
-# [ 6 ]-----[ 7 ]-----[ 8 ]-----[ 9 ]-----[1 0]-----[1 1]\n
-# ===================================================\n
+# [1 8]-----[1 9]-----[2 0]-----[2 1]-----[2 2]-----[2 3]\n
+# ===================================================
+## Incomplete
+### New levels arent formatted correctly in discord
 
-# f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n
-# ___ ___________________________________________ ___\n
-#    |_ AAAAAAAAAAAAA             BBBBBBBBBBBBB _|\n
-#      CCCCCCCCCCC _|             |_ DDDDDDDDDDD\n  
-#      |_______________________________________|____\n     
-# ===================================================\n
-# [1 2]-----[1 3]-----[1 4]-----[1 5]-----[1 6]-----[1 7]\n
-# ===================================================\n
 
     if direction == "main":
         page = main_page
@@ -156,68 +152,22 @@ class purchase_dropdown_view(nextcord.ui.View):
 
 class purchase_dropdown(nextcord.ui.Select):
     def __init__(self):
-        global skills
-        skills = {
-            0: {
-                0.1: {
-                "label": "Reaction Perms",
-                "description": "Unlock Reactions in the server.",
-                "cost": 1,
-                "value": 0.1,
-                "prerequisites": []
-                },
-                0.2: {
-                "label": "Image Perms",
-                "description": "Unlock Images in the server.",
-                "cost": 1,
-                "value": 0.2,
-                "prerequisites": []
-                },
-                0.3: {
-                "label": "1.25xp Multi",
-                "description": "Increase your xp gain by 25%.",
-                "cost": 1,
-                "value": 0.3,
-                "prerequisites": []
-                },
-                0.4: {
-                "label": "Custom Color",
-                "description": "Gain a custom color role",
-                "cost": 1,
-                "value": 0.4,
-                "prerequisites": [0.2]
-                },
-                0.5: {
-                "label": "Embed Perms",
-                "description": "Unlock Embeds in the server.",
-                "cost": 1,
-                "value": 0.5,
-                "prerequisites": [0.2]
-                }
-            },
-            1: {
-               1.1: {
-                "label": "placeholder",
-                "description": "placeholder",
-                "cost": 1,
-                "value": 1.1,
-                "prerequisites": []
-                }
-            }
-        }
         options = []
         for i, value in enumerate(skills[page]):
             skill_index = skills[page][value]["value"]
             label = skills[page][value]["label"]
+            prerequisites = skills[page][value]["prerequisites"]
+            description = skills[page][value]["description"]
+            cost = skills[page][value]["cost"]
+            emoji = skills[page][value]["emoji"]
             if skill_index in purchased_nodes: pass # Dont show already purchased
             else: # Only shows perks that can be purchased
-                prerequisites = skills[page][value]["prerequisites"]
                 if all(prerequisites in purchased_nodes for prerequisites in prerequisites):
                     skill_index = str(skill_index)
-                    i = nextcord.SelectOption(label=label, value=skill_index)
+                    i = nextcord.SelectOption(label=label, value=skill_index, description=str(description)+" [Cost: "+str(cost)+" SP]", emoji=emoji)
                     options.append(i)
                 else: pass
-        options.append(nextcord.SelectOption(label="Close", value="Close")) # add close to each dropdown
+        options.append(nextcord.SelectOption(label="Close", value="Close", description="Close buy menu.", emoji="❌")) # add close to each dropdown
 
         super().__init__(placeholder="Select a skill to buy", min_values=1, max_values=1, options=options)
     
@@ -225,10 +175,15 @@ class purchase_dropdown(nextcord.ui.Select):
         if interaction.user.id == userID:
             if skill_points > 0: # has skill points
                 if self.values[0] != "Close": # save if chose skill
-                    skill_purchased = float(self.values[0])
-                    updateSkillData(userID, skill_purchased)
-                message = changePage(direction="none")
-                await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
+                    if skill_points < skills[page][float(self.values[0])]["cost"]: # not enough skill points
+                        message = changePage(direction="none")
+                        await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
+                        await interaction.followup.send("You don't have enough skill points to buy this.", ephemeral=True)
+                    else: # has enough skill points
+                        skill_purchased = float(self.values[0])
+                        updateSkillData(userID, skill_purchased)
+                        message = changePage(direction="none")
+                        await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
             else: # no skill points
                 message = changePage(direction="none") 
                 await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
