@@ -13,11 +13,14 @@ def updateSkillData(userID, skill_purchased):
     commands_sent = data["commands_sent"]
     level = data["level_stats"]["level"]
     xp = data["level_stats"]["xp"]
-    skill_tree_progress = data["level_stats"]["skill_tree_progress"]
+
     skill_points = data["level_stats"]["skill_points"] - 1
     purchased_nodes = data["level_stats"]["purchased_nodes"]
     purchased_nodes.append(skill_purchased)
     purchased_nodes.sort()
+
+    skill_tree_progress = data["level_stats"]["skill_tree_progress"]
+    skill_tree_progress = len(purchased_nodes) - 1
 
     db_user_data.update_one(
         {"userID": userID},
@@ -52,7 +55,7 @@ def changePage(direction):
     purchased_nodes = data["level_stats"]["purchased_nodes"]
 
     # Skill Tree Calculations
-    max_skill_tree_progress = 100
+    max_skill_tree_progress = 100 # Total skills
     next_level = level + 1
     next_level_percentage = int((xp / level_xp_requirements[next_level]) * 100)
     
@@ -83,9 +86,11 @@ def changePage(direction):
         return correct(level, next_level_percentage, message=skill_tree_pages[page])
 
 def correct(level, next_level_percentage, message):
-    message = message.replace("-", "~", int(((level * 5)) + (int(next_level_percentage) / 20) - page*25))
+    progress_bar = int((((level * 5)) + (int(next_level_percentage) / 20) - page*25))
     # Progress Bar Updater, (((level x 5) + (% to next level)) / 20) - (pageNUM x 25) << 'resets' bar every 5 levels
-    #                                 (in 20% increments)^^     ^^(to get 20% 'chunks')
+    #                                  (in 20% increments)^^     ^^(to get 20% 'chunks')
+    if progress_bar < 0: progress_bar = 0 # if negative, set to 0
+    message = message.replace("-", "~", progress_bar)
     message = message.replace("_", "\_")
     message = message.replace("~", "\~")
     return message
@@ -135,7 +140,7 @@ class purchase_dropdown(nextcord.ui.Select):
     def __init__(self):
         global skills
         skills = [["Index Setter", "Reaction Perms", "Image Perms", "1.25xp Multi", "Custom Color", "Embed Perms"], ["Index Setter", "placeholder"], ["Index Setter", "placeholder"]]
-        # Set No.  0                                                                                      1                     2
+        # Set No.  0                                                                                                  1                                2
 
         options = []
         for i, value in enumerate(skills[page]):
