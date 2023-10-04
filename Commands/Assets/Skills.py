@@ -14,7 +14,7 @@ skills = {
         "cost": 1,
         "value": 0.2,
         "prerequisites": [],
-        "emoji": "🖼️"
+        "emoji": "📦"
         },
         0.3: {
         "label": "1.10xp Multi",
@@ -48,7 +48,7 @@ skills = {
         "cost": 1,
         "value": 1.1,
         "prerequisites": [0.2],
-        "emoji": "🔒"
+        "emoji": "📨"
         },
         1.2: {
         "label": "External Emojis",
@@ -56,7 +56,7 @@ skills = {
         "cost": 1,
         "value": 1.2,
         "prerequisites": [0.2],
-        "emoji": "🔒"
+        "emoji": "😀"
         },
         1.3: {
         "label": "Small XP Pack",
@@ -64,7 +64,7 @@ skills = {
         "cost": 1,
         "value": 1.3,
         "prerequisites": [0.2],
-        "emoji": "🔒"
+        "emoji": "📦"
         },
         1.4: {
         "label": "/report Command",
@@ -72,7 +72,7 @@ skills = {
         "cost": 1,
         "value": 1.4,
         "prerequisites": [1.1, 1.2, 1.3],
-        "emoji": "🔒"
+        "emoji": "👮‍♂️"
         },
         1.5: {
         "label": "External Stickers",
@@ -80,7 +80,7 @@ skills = {
         "cost": 1,
         "value": 1.5,
         "prerequisites": [1.1, 1.2, 1.3],
-        "emoji": "🔒"
+        "emoji": "🤩"
         },
         1.6: {
         "label": "Talk in Threads",
@@ -88,7 +88,7 @@ skills = {
         "cost": 1,
         "value": 1.6,
         "prerequisites": [1.5],
-        "emoji": "🔒"
+        "emoji": "🧵"
         },    
     },
     2: {

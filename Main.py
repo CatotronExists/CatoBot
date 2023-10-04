@@ -26,6 +26,10 @@ CBOLD = '\033[1m'
 # Vars #
 extension_command_list = ["bot_stats", "user_lookup", "command_leaderboard", "skill_tree"]
 full_command_list = ["shutdown", "reload", "bot_stats", "user_lookup", "command_leaderboard", "skill_tree"]
+### Channels
+level_channel = 1158919090073784452
+welcome_channel = 739608668152135773
+
 #      #
 
 ### Discord Setup
@@ -129,7 +133,7 @@ def fetchBotData():
     data = db_bot_stats.find_one({"Commands_Used": {"$exists": True}})
     return data
 
-def updateXP(userID):
+async def updateXP(userID):
     ### Level Requirements
     level_xp_requirements = [0, 10, 40, 80, 150, 250, 350, 450, 550, 650, 750, 850, 950, 1050, 1150, 1250, 1350, 1450, 1550, 1650, 1750]
     #                        0   1   2   3    4    5    6    7    8    9   10   11   12    13    14    15    16    17    18    19    20
@@ -145,13 +149,15 @@ def updateXP(userID):
     purchased_nodes = data["level_stats"]["purchased_nodes"]
 
     # xp calculation
-    xp_gain = random.randint(100, 1000)
+    xp_gain = random.randint(1, 15)
     xp = xp + xp_gain
     if xp >= level_xp_requirements[level+1]: # level up
         level += 1
         skill_points += 1
         xp = 0
         formatOutput(output="Level Up! "+str(userID)+" is now level "+str(level), status="Normal")
+        channel = bot.get_channel(level_channel)
+        await channel.send("Level Up! <@"+str(userID)+"> is now level "+str(level))
 
     db_user_data.update_one(
         {"userID": userID},
@@ -260,7 +266,7 @@ async def CommandName(interaction: nextcord.Interaction):
 @bot.event
 async def on_member_join(member: nextcord.Member):
     userID = member.id
-    channel = bot.get_channel(739608668152135773)
+    channel = bot.get_channel(welcome_channel)
     await channel.send("Welcome to Catotron's World, <@"+str(userID)+"> !")
     formatOutput(output="Member Joined: "+str(member)+" | ID: "+str(userID), status="Normal")
     formatOutput(output="    Checking for existing user profile...", status="Normal")
@@ -300,7 +306,7 @@ async def on_message(message: nextcord.message): # waits for message
         else: # user message
             userID = message.author.id
             updateUserData(userID, Type="Message")
-            updateXP(userID)
+            await updateXP(userID)
     except Exception as e: formatOutput(output="    Failed to save message from "+str(userID)+" // Error: "+str(e), status="Warning")
 
 bot.run(bot_token)
