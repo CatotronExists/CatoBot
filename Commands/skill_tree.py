@@ -181,6 +181,16 @@ class purchase_dropdown(nextcord.ui.Select):
                     else: # has enough skill points
                         skill_purchased = float(self.values[0])
                         updateSkillData(userID, skill_purchased)
+
+                        role = skills[page][skill_purchased]["roleID"]
+                        if role == "n/a": pass # if there is no role
+                        else: # give role
+                            role = interaction.guild.get_role(role)
+                            await interaction.user.add_roles(role)
+                        message = changePage(direction="none")    
+                        await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
+                        await interaction.followup.send("Granted "+str(role)+" role.", ephemeral=True)
+                        
                 else: # is 'close'
                     message = changePage(direction="none")
                     await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
@@ -207,7 +217,6 @@ class Command_skill_tree_Cog(commands.Cog):
         message = changePage(direction="main")
 
         await interaction.send(message, view=skill_tree_view(interaction))
-
         await save(command, userID, Type="Command")
 
 def setup(bot):

@@ -6,7 +6,8 @@ skills = {
         "cost": 1,
         "value": 0.1,
         "prerequisites": [],
-        "emoji": "💬"
+        "emoji": "💬",
+        "roleID": 1158924938951020564
         },
         0.2: {
         "label": "Small XP Pack",
@@ -14,7 +15,8 @@ skills = {
         "cost": 1,
         "value": 0.2,
         "prerequisites": [],
-        "emoji": "📦"
+        "emoji": "📦",
+        "roleID": "n/a"
         },
         0.3: {
         "label": "1.10xp Multi",
@@ -22,7 +24,8 @@ skills = {
         "cost": 1,
         "value": 0.3,
         "prerequisites": [],
-        "emoji": "📈"
+        "emoji": "📈",
+        "roleID": "n/a"
         },
         0.4: {
         "label": "Custom Color",
@@ -30,7 +33,8 @@ skills = {
         "cost": 1,
         "value": 0.4,
         "prerequisites": [0.2],
-        "emoji": "🎨"
+        "emoji": "🎨",
+        "roleID": 1158926421591347201 # just the placeholder role, [defaultID, color1ID, color2ID, color3ID]
         },
         0.5: {
         "label": "Embed Perms",
@@ -38,7 +42,8 @@ skills = {
         "cost": 1,
         "value": 0.5,
         "prerequisites": [0.2],
-        "emoji": "📄"
+        "emoji": "📄",
+        "roleID": 1158926663262941295
         }
     },
     1: {
@@ -48,7 +53,8 @@ skills = {
         "cost": 1,
         "value": 1.1,
         "prerequisites": [0.2],
-        "emoji": "📨"
+        "emoji": "📨",
+        "roleID": 1158927442908553360
         },
         1.2: {
         "label": "External Emojis",
@@ -56,7 +62,8 @@ skills = {
         "cost": 1,
         "value": 1.2,
         "prerequisites": [0.2],
-        "emoji": "😀"
+        "emoji": "😀",
+        "roleID": 1158927844102131771
         },
         1.3: {
         "label": "Small XP Pack",
@@ -64,7 +71,8 @@ skills = {
         "cost": 1,
         "value": 1.3,
         "prerequisites": [0.2],
-        "emoji": "📦"
+        "emoji": "📦",
+        "roleID": "n/a"
         },
         1.4: {
         "label": "/report Command",
@@ -72,7 +80,8 @@ skills = {
         "cost": 1,
         "value": 1.4,
         "prerequisites": [1.1, 1.2, 1.3],
-        "emoji": "👮‍♂️"
+        "emoji": "👮‍♂️",
+        "roleID": 1158928155957002241
         },
         1.5: {
         "label": "External Stickers",
@@ -80,7 +89,8 @@ skills = {
         "cost": 1,
         "value": 1.5,
         "prerequisites": [1.1, 1.2, 1.3],
-        "emoji": "🤩"
+        "emoji": "🤩",
+        "roleID": 1158928412665188444
         },
         1.6: {
         "label": "Talk in Threads",
@@ -88,7 +98,8 @@ skills = {
         "cost": 1,
         "value": 1.6,
         "prerequisites": [1.5],
-        "emoji": "🧵"
+        "emoji": "🧵",
+        "roleID": 1158928609159950437
         },    
     },
     2: {
@@ -98,7 +109,8 @@ skills = {
         "cost": 1,
         "value": 2.1,
         "prerequisites": [],
-        "emoji": "🔒"
+        "emoji": "🔒",
+        "roleID": 0
         },
         2.2: {
         "label": "placeholder",
@@ -106,7 +118,8 @@ skills = {
         "cost": 1,
         "value": 2.2,
         "prerequisites": [],
-        "emoji": "🔒"
+        "emoji": "🔒",
+        "roleID": 0
         },
         2.3: {
         "label": "placeholder",
@@ -114,7 +127,8 @@ skills = {
         "cost": 1,
         "value": 2.3,
         "prerequisites": [],
-        "emoji": "🔒"
+        "emoji": "🔒",
+        "roleID": 0
         },
         2.4: {
         "label": "placeholder",
@@ -122,7 +136,8 @@ skills = {
         "cost": 1,
         "value": 2.4,
         "prerequisites": [],
-        "emoji": "🔒"
+        "emoji": "🔒",
+        "roleID": 0
         }
     }
 }
