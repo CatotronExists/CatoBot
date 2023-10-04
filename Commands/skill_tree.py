@@ -62,21 +62,11 @@ def changePage(direction):
     ### Pages
     global skill_tree_pages
     skill_tree_pages = [
-    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n|_ Reaction Perms   _ Custom Color              _________\n|_ Small XP Pack  /                              |\n|  |________________|   _ Embed Perms        |\n|_ 1.10xp Multi    \\___|_________________|_________\n===================================================\n[ 0 ]-----[ 1 ]-----[ 2 ]-----[ 3 ]-----[ 4 ]-----[ 5 ]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend.",
+    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n|_ Reaction Perms   _ Custom Color              _________\n|_ Tiny XP Pack     /                              |\n|  |________________|   _ Embed Perms        |\n|_ 1.10xp Multi    \\___|_________________|_________\n===================================================\n[ 0 ]-----[ 1 ]-----[ 2 ]-----[ 3 ]-----[ 4 ]-----[ 5 ]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend.",
     f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n____ Media Perms ________  _  _____ /report Command __\n        __ External Emojis ___/   \_ External Stickers ___\n____/                               /                                              /\n         \\\__ Small XP Pack __/              Talk in Threads ___/\n===================================================\n[ 6 ]-----[ 7 ]-----[ 8 ]-----[ 9 ]-----[1 0]-----[1 1]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend.",
-    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n___ _______________________________________ ______\n       |_ Nickname Perms                  Medium XP Pack _|\n                   Tester Role _|                  |_ 1.25xp Multi\n                   |______________________________|__________\n===================================================\n[1 2]-----[1 3]-----[1 4]-----[1 5]-----[1 6]-----[1 7]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend."
+    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n___ _______________________________________ \n       |_ Nickname Perms                  Medium XP Pack _|\n                   Tester Role _|                  |_ 1.25xp Multi\n                   |______________________________|__________\n===================================================\n[1 2]-----[1 3]-----[1 4]-----[1 5]-----[1 6]-----[1 7]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend.",
+    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n                _____ MASSIVE XP PACK\n             /____ VC Status\n           /______________________ **(=[Completionist Role]=)**\n____/_____ Create Invites                     [Requires all skills]\n===================================================\n[1 8]-----[1 9]-----[2 0]               **More Comming Soon**\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend."
     ]
-
-# f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n
-# ____CCCCCCCCCCCCCCCC __ _ ____________ FFFFFFFFFFF ___
-#      _ AAAAAAAAAAA ___/   \_ DDDDDDDDDDDD _
-# ____/                /                    /
-#     \_ BBBBBBBBBB __/         EEEEEEEEE _/
-# ===================================================\n
-# [1 8]-----[1 9]-----[2 0] More Comming Soon\n
-# ===================================================\n
-# {level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend.
-## Incomplete
 
     if direction == "main":
         page = main_page
@@ -195,7 +185,7 @@ class purchase_dropdown(nextcord.ui.Select):
                 if self.values[0] != "Close": await interaction.followup.send("You don't have any skill points to spend.", ephemeral=True)
 
 class Command_skill_tree_Cog(commands.Cog):
-    
+
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 

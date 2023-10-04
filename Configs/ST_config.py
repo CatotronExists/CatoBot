@@ -1,6 +1,7 @@
 ### Skill Tree/Leveling Configs ###
 level_xp_requirements = [0, 10, 40, 80, 150, 250, 350, 450, 550, 650, 750, 850, 950, 1050, 1150, 1250, 1350, 1450, 1550, 1650, 1750]
 #                        0   1   2   3    4    5    6    7    8    9   10   11   12    13    14    15    16    17    18    19    20
+
 lowerXP_gain = 1 # lowest amount of xp you can gain
 upperXP_gain = 15 # highest amount of xp you can gain
 
@@ -16,8 +17,8 @@ skills = {
         "roleID": 1158924938951020564
         },
         0.2: {
-        "label": "Small XP Pack",
-        "description": "Grants you 200xp.",
+        "label": "Tiny XP Pack",
+        "description": "Grants you 100xp.",
         "cost": 1,
         "value": 0.2,
         "prerequisites": [],
@@ -26,7 +27,7 @@ skills = {
         },
         0.3: {
         "label": "1.10xp Multi",
-        "description": "Increase your xp gain by 10%. PERMANENTLY. (Stacks with other bonuses)",
+        "description": "XP gain upped by 10%. PERMANENTLY. (Stacks)",
         "cost": 1,
         "value": 0.3,
         "prerequisites": [],
@@ -73,7 +74,7 @@ skills = {
         },
         1.3: {
         "label": "Small XP Pack",
-        "description": "Grants you 200xp.",
+        "description": "Grants you 300xp.",
         "cost": 1,
         "value": 1.3,
         "prerequisites": [0.2],
@@ -114,36 +115,74 @@ skills = {
         "description": "Be able to change your nickname in the server.",
         "cost": 1,
         "value": 2.1,
-        "prerequisites": [],
+        "prerequisites": [1.4],
         "emoji": "🗨",
-        "roleID": 0
+        "roleID": 1159268603531624528
         },
         2.2: {
         "label": "Medium XP Pack",
-        "description": "Grants you 500xp.",
-        "cost": 1,
+        "description": "Grants you 1000xp.",
+        "cost": 2,
         "value": 2.2,
-        "prerequisites": [],
+        "prerequisites": [1.4],
         "emoji": "🎁",
-        "roleID": 0
+        "roleID": "n/a"
         },
         2.3: {
         "label": "Tester Role",
         "description": "Help test the bot, when needed.",
         "cost": 1,
         "value": 2.3,
-        "prerequisites": [],
+        "prerequisites": [2.1],
         "emoji": "🛠",
-        "roleID": 0
+        "roleID": 1159268716756860938
         },
         2.4: {
         "label": "1.25xp Multi",
-        "description": "Increase your xp gain by 25%. PERMANENTLY. (Stacks with other bonuses)",
-        "cost": 1,
+        "description": "XP gain upped by 25%. PERMANENTLY. (Stacks)",
+        "cost": 2,
         "value": 2.4,
-        "prerequisites": [],
+        "prerequisites": [2.2],
         "emoji": "📈",
-        "roleID": 0
+        "roleID": "n/a"
+        }
+    },
+    3: {
+        3.1: {
+        "label": "Create Invites",
+        "description": "Now you can create invites, cool I guess.",
+        "cost": 1,
+        "value": 3.1,
+        "prerequisites": [2.3, 2.4],
+        "emoji": "📨",
+        "roleID": 1159268789494485033
+        },
+        3.2: {
+        "label": "VC Status",
+        "description": "Set the status of your VC",
+        "cost": 1,
+        "value": 3.2,
+        "prerequisites": [2.3, 2.4],
+        "emoji": "🎙",
+        "roleID": 1159268885850243133
+        },
+        3.3: {
+        "label": "MASSIVE XP PACK",
+        "description": "Grants you 5000xp.",
+        "cost": 3,
+        "value": 3.3,
+        "prerequisites": [2.3,2.4],
+        "emoji": "📈",
+        "roleID": "n/a"
+        },
+        3.4: {
+        "label": "Completionist",
+        "description": "Gain the ultimate role, Completionist.",
+        "cost": 1,
+        "value": 3.4,
+        "prerequisites": [0.1, 0.2, 0.3, 0.4, 0.5, 1.1, 1.2, 1.3, 1.4, 1.5, 2.1, 2.2, 2.3, 2.4, 3.1, 3.2, 3.3], # every skill
+        "emoji": "🎨",
+        "roleID": 1159269069921452192
         }
     }
 }
