@@ -119,9 +119,9 @@ def updateUserData(userID, Type):
         }}
     )
 
-def fetchUserData(user, searched_user_id):
+def fetchUserData(searched_user_id):
     try:
-        formatOutput(output="    Finding Data for "+str(user), status="Normal")
+        formatOutput(output="    Finding Data for "+str(searched_user_id), status="Normal")
         data = db_user_data.find_one({"userID": searched_user_id})
         formatOutput(output="    Data Found", status="Good")
     except Exception as e: 

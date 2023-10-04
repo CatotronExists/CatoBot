@@ -20,7 +20,7 @@ skills = {
         },
         0.3: {
         "label": "1.10xp Multi",
-        "description": "Increase your xp gain by 10%. PERMANENTLY.",
+        "description": "Increase your xp gain by 10%. PERMANENTLY. (Stacks with other bonuses)",
         "cost": 1,
         "value": 0.3,
         "prerequisites": [],
@@ -76,7 +76,7 @@ skills = {
         },
         1.4: {
         "label": "/report Command",
-        "description": "Unlock the /report command.",
+        "description": "Unlock the /report command. (Comming Soon)",
         "cost": 1,
         "value": 1.4,
         "prerequisites": [1.1, 1.2, 1.3],
@@ -104,35 +104,35 @@ skills = {
     },
     2: {
         2.1: {
-        "label": "placeholder",
-        "description": "placeholder",
+        "label": "Nickname Perms",
+        "description": "Be able to change your nickname in the server.",
         "cost": 1,
         "value": 2.1,
         "prerequisites": [],
-        "emoji": "🔒",
+        "emoji": "🗨",
         "roleID": 0
         },
         2.2: {
-        "label": "placeholder",
-        "description": "placeholder",
+        "label": "Medium XP Pack",
+        "description": "Grants you 500xp.",
         "cost": 1,
         "value": 2.2,
         "prerequisites": [],
-        "emoji": "🔒",
+        "emoji": "🎁",
         "roleID": 0
         },
         2.3: {
-        "label": "placeholder",
-        "description": "placeholder",
+        "label": "Tester Role",
+        "description": "Help test the bot, when needed.",
         "cost": 1,
         "value": 2.3,
         "prerequisites": [],
-        "emoji": "🔒",
+        "emoji": "🛠",
         "roleID": 0
         },
         2.4: {
-        "label": "placeholder",
-        "description": "placeholder",
+        "label": "1.25xp Multi",
+        "description": "Increase your xp gain by 25%. PERMANENTLY. (Stacks with other bonuses)",
         "cost": 1,
         "value": 2.4,
         "prerequisites": [],

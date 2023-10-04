@@ -3,7 +3,7 @@ import datetime
 from nextcord.ext import commands
 from Main import formatOutput, save, guild_ID
 from Config import db_user_data
-from Commands.Assets.Skills import skills, skill_number
+from Commands.Configs.ST_config import skills, skill_number
 
 def updateSkillData(userID, skill_purchased):
     formatOutput(output="Skill ["+str(skill_purchased)+"] Purchased by ("+str(userID)+")", status="Normal")
@@ -68,7 +68,7 @@ def changePage(direction):
     skill_tree_pages = [
     f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n|_ Reaction Perms   _ Custom Color              _________\n|_ Small XP Pack  /                              |\n|  |________________|   _ Embed Perms        |\n|_ 1.10xp Multi    \\___|_________________|_________\n===================================================\n[ 0 ]-----[ 1 ]-----[ 2 ]-----[ 3 ]-----[ 4 ]-----[ 5 ]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend.",
     f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n____ Media Perms ________  _  _____ /report Command __\n        __ External Emojis ___/   \_ External Stickers ___\n____/                               /                                              /\n         \\\__ Small XP Pack __/              Talk in Threads ___/\n===================================================\n[ 6 ]-----[ 7 ]-----[ 8 ]-----[ 9 ]-----[1 0]-----[1 1]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend.",
-    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n___ ___________________________________________ ___\n   |_ AAAAAAAAAAAAA             BBBBBBBBBBBBB _|\n     CCCCCCCCCCC _|             |_ DDDDDDDDDDD\n     |_______________________________________|____\n===================================================\n[1 2]-----[1 3]-----[1 4]-----[1 5]-----[1 6]-----[1 7]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend."
+    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n___ _______________________________________ ______\n       |_ Nickname Perms                  Medium XP Pack _|\n                   Tester Role _|                  |_ 1.25xp Multi\n                   |______________________________|__________\n===================================================\n[1 2]-----[1 3]-----[1 4]-----[1 5]-----[1 6]-----[1 7]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend."
     ]
 
 # f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n
@@ -81,7 +81,6 @@ def changePage(direction):
 # ===================================================\n
 # {level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend.
 ## Incomplete
-### New levels arent formatted correctly in discord
 
     if direction == "main":
         page = main_page
