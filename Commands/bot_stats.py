@@ -2,7 +2,7 @@ import nextcord
 import datetime
 from nextcord.ext import commands
 from Main import formatOutput, save, guild_ID, start_time
-from Config import version
+from Configs.Main_config import version
 
 class Command_bot_stats_Cog(commands.Cog):
     def __init__(self, bot: commands.Bot):

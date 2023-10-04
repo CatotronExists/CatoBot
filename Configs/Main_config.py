@@ -1,7 +1,7 @@
 ### CATOBOT CONFIG ###
 from Keys import db
 
-version = "v0.6.d-14"
+version = "v0.6.d-15"
 guild_ID = 739608667594162206
 
 # Database Links

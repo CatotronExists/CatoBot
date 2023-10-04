@@ -2,8 +2,8 @@ import nextcord
 import datetime
 from nextcord.ext import commands
 from Main import formatOutput, save, guild_ID
-from Config import db_user_data
-from Commands.Configs.ST_config import skills, skill_number
+from Configs.Main_config import db_user_data
+from Configs.ST_config import skills, skill_number, level_xp_requirements
 
 def updateSkillData(userID, skill_purchased):
     formatOutput(output="Skill ["+str(skill_purchased)+"] Purchased by ("+str(userID)+")", status="Normal")
@@ -42,10 +42,6 @@ def updateSkillData(userID, skill_purchased):
     formatOutput(output="    Saved Purchase of ["+str(skill_purchased)+"] by ("+str(userID)+")", status="Good")
 
 def changePage(direction):
-    ### Level Requirements
-    level_xp_requirements = [0, 10, 40, 80, 150, 250, 350, 450, 550, 650, 750, 850, 950, 1050, 1150, 1250, 1350, 1450, 1550, 1650, 1750]
-    #                        0   1   2   3    4    5    6    7    8    9   10   11   12    13    14    15    16    17    18    19    20
-        
     # get user data
     global skill_points, purchased_nodes
     data = db_user_data.find_one({"userID": userID})
@@ -199,6 +195,7 @@ class purchase_dropdown(nextcord.ui.Select):
                 if self.values[0] != "Close": await interaction.followup.send("You don't have any skill points to spend.", ephemeral=True)
 
 class Command_skill_tree_Cog(commands.Cog):
+    
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 

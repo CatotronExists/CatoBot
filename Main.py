@@ -5,8 +5,8 @@ import datetime
 import nextcord
 from nextcord import Interaction, SlashOption
 from nextcord.ext import commands
-from Config import version, guild_ID, db_bot_stats, db_user_data, db_bot_setup
-from Keys import bot_token, client, dev_mode, self_host
+from Configs.Main_config import version, guild_ID, db_bot_stats, db_user_data, lowerXP_gain, upperXP_gain, level_xp_requirements
+from Keys import bot_token, client, dev_mode
 import pymongo
 import random
 #         #
@@ -29,7 +29,6 @@ full_command_list = ["shutdown", "reload", "bot_stats", "user_lookup", "command_
 ### Channels
 level_channel = 1158919090073784452
 welcome_channel = 739608668152135773
-
 #      #
 
 ### Discord Setup
@@ -134,10 +133,6 @@ def fetchBotData():
     return data
 
 async def updateXP(userID):
-    ### Level Requirements
-    level_xp_requirements = [0, 10, 40, 80, 150, 250, 350, 450, 550, 650, 750, 850, 950, 1050, 1150, 1250, 1350, 1450, 1550, 1650, 1750]
-    #                        0   1   2   3    4    5    6    7    8    9   10   11   12    13    14    15    16    17    18    19    20
-
     data = db_user_data.find_one({"userID": userID})
     join_date = data["join_date"]
     messages_sent = data["messages_sent"]
@@ -149,7 +144,7 @@ async def updateXP(userID):
     purchased_nodes = data["level_stats"]["purchased_nodes"]
 
     # xp calculation
-    xp_gain = random.randint(1, 15)
+    xp_gain = random.randint(lowerXP_gain, upperXP_gain)
     xp = xp + xp_gain
     if xp >= level_xp_requirements[level+1]: # level up
         level += 1

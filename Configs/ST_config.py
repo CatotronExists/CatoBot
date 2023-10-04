@@ -1,3 +1,9 @@
+### Skill Tree/Leveling Configs ###
+level_xp_requirements = [0, 10, 40, 80, 150, 250, 350, 450, 550, 650, 750, 850, 950, 1050, 1150, 1250, 1350, 1450, 1550, 1650, 1750]
+#                        0   1   2   3    4    5    6    7    8    9   10   11   12    13    14    15    16    17    18    19    20
+lowerXP_gain = 1 # lowest amount of xp you can gain
+upperXP_gain = 15 # highest amount of xp you can gain
+
 skills = {
     0: {
         0.1: {
@@ -136,7 +142,7 @@ skills = {
         "cost": 1,
         "value": 2.4,
         "prerequisites": [],
-        "emoji": "🔒",
+        "emoji": "📈",
         "roleID": 0
         }
     }
