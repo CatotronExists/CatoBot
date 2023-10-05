@@ -1,6 +1,7 @@
 import nextcord
 from nextcord.ext import commands
 from Main import formatOutput, save, guild_ID, fetchUserData
+from Configs.ST_config import max_level
 
 class Command_user_lookup_Cog(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -26,8 +27,10 @@ class Command_user_lookup_Cog(commands.Cog):
             level = data["level_stats"]["level"]
             xp = data["level_stats"]["xp"]
             skill_tree_progress = data["level_stats"]["skill_tree_progress"]
+            xp_multi = data["level_stats"]["xp_multi"]
 
-            embed = nextcord.Embed(title="Showing Stats for "+str(user)+" | ID: ("+str(searched_user_id)+")", description="Join Date: "+str(join_date)+"\nMessages Sent: "+str(messages_sent)+"\nCommands Sent: "+str(commands_sent)+"\n**Level Data**\n-->> Level: "+str(level)+"\n-->> XP: "+str(xp)+"\n-->> Skill Tree Progress: "+str(skill_tree_progress))
+            if level != max_level: embed = nextcord.Embed(title="Showing Stats for "+str(user)+" | ID: ("+str(searched_user_id)+")", description="Join Date: "+str(join_date)+"\nMessages Sent: "+str(messages_sent)+"\nCommands Sent: "+str(commands_sent)+"\n**Level Data**\n-->> Level: "+str(level)+"\n-->> XP: "+str(xp)+"\n-->> XP Multi: "+str(1 + xp_multi)+"\n-->> Skill Tree Progress: "+str(skill_tree_progress))
+            else: embed = nextcord.Embed(title="Showing Stats for "+str(user)+" | ID: ("+str(searched_user_id)+")", description="Join Date: "+str(join_date)+"\nMessages Sent: "+str(messages_sent)+"\nCommands Sent: "+str(commands_sent)+"\n**Level Data**\n-->> Level: "+str(level)+"\n-->> Overflow XP: "+str(xp)+"\n-->> XP Multi: "+str(1 + xp_multi)+"\n-->> Skill Tree Progress: "+str(skill_tree_progress))
             await interaction.send(embed=embed)
         except Exception as e: # replies with error message
             await interaction.send(data)

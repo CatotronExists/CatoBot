@@ -1,9 +1,9 @@
 import nextcord
 import datetime
 from nextcord.ext import commands
-from Main import formatOutput, save, guild_ID
+from Main import formatOutput, save, guild_ID, updateXP
 from Configs.Main_config import db_user_data
-from Configs.ST_config import skills, skill_number, level_xp_requirements
+from Configs.ST_config import skills, skill_number, level_xp_requirements, max_level
 
 def updateSkillData(userID, skill_purchased):
     formatOutput(output="Skill ["+str(skill_purchased)+"] Purchased by ("+str(userID)+")", status="Normal")
@@ -22,6 +22,7 @@ def updateSkillData(userID, skill_purchased):
 
     skill_tree_progress = data["level_stats"]["skill_tree_progress"]
     skill_tree_progress = len(purchased_nodes) - 1
+    xp_multi = data["level_stats"]["xp_multi"]
 
     db_user_data.update_one(
         {"userID": userID},
@@ -35,7 +36,8 @@ def updateSkillData(userID, skill_purchased):
                 "xp": xp,
                 "skill_tree_progress": skill_tree_progress,
                 "skill_points": skill_points,
-                "purchased_nodes": purchased_nodes
+                "purchased_nodes": purchased_nodes,
+                "xp_multi": xp_multi
             }
         }}
     )
@@ -53,19 +55,26 @@ def changePage(direction):
 
     # Skill Tree Calculations
     max_skill_tree_progress = skill_number
-    next_level = level + 1
-    next_level_percentage = int((xp / level_xp_requirements[next_level]) * 100)
-    
     global page, main_page
-    main_page = int(level / 5)
+
+    if level != max_level: 
+        next_level_percentage = int((xp / level_xp_requirements[next_level]) * 100)
+        next_level = level + 1
+        xp_required = level_xp_requirements[next_level] - xp
+        main_page = int(level / 5)
+    else: 
+        next_level_percentage = "!!MAX LEVEL!!"
+        xp_required = "Max Level Reached, no"
+        next_level = "∞"
+        main_page = 3
 
     ### Pages
     global skill_tree_pages
     skill_tree_pages = [
-    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n|_ Reaction Perms   _ Custom Color              _________\n|_ Tiny XP Pack     /                              |\n|  |________________|   _ Embed Perms        |\n|_ 1.10xp Multi    \\___|_________________|_________\n===================================================\n[ 0 ]-----[ 1 ]-----[ 2 ]-----[ 3 ]-----[ 4 ]-----[ 5 ]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend.",
-    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n____ Media Perms ________  _  _____ /report Command __\n        __ External Emojis ___/   \_ External Stickers ___\n____/                               /                                              /\n         \\\__ Small XP Pack __/              Talk in Threads ___/\n===================================================\n[ 6 ]-----[ 7 ]-----[ 8 ]-----[ 9 ]-----[1 0]-----[1 1]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend.",
-    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n___ _______________________________________ \n       |_ Nickname Perms                  Medium XP Pack _|\n                   Tester Role _|                  |_ 1.25xp Multi\n                   |______________________________|__________\n===================================================\n[1 2]-----[1 3]-----[1 4]-----[1 5]-----[1 6]-----[1 7]\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend.",
-    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n                _____ MASSIVE XP PACK\n             /____ VC Status\n           /______________________ **(=[Completionist Role]=)**\n____/_____ Create Invites                     [Requires all skills]\n===================================================\n[1 8]-----[1 9]-----[2 0]               **More Comming Soon**\n===================================================\n{level_xp_requirements[next_level] - xp} xp until level {next_level}, You have {skill_points} SP to spend."
+    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n|_ Reaction Perms   _ Custom Color              _________\n|_ Tiny XP Pack     /                              |\n|  |________________|   _ Embed Perms        |\n|_ 1.10xp Multi    \\___|_________________|_________\n===================================================\n[ 0 ]-----[ 1 ]-----[ 2 ]-----[ 3 ]-----[ 4 ]-----[ 5 ]\n===================================================\n{xp_required} xp until level {next_level}, You have {skill_points} SP to spend.",
+    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n____ Media Perms ________  _  _____ /report Command __\n        __ External Emojis ___/   \_ External Stickers ___\n____/                               /                                              /\n         \\\__ Small XP Pack __/              Talk in Threads ___/\n===================================================\n[ 6 ]-----[ 7 ]-----[ 8 ]-----[ 9 ]-----[1 0]-----[1 1]\n===================================================\n{xp_required} xp until level {next_level}, You have {skill_points} SP to spend.",
+    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n___ _______________________________________ \n       |_ Nickname Perms                  Medium XP Pack _|\n                   Tester Role _|                  |_ 1.25xp Multi\n                   |______________________________|__________\n===================================================\n[1 2]-----[1 3]-----[1 4]-----[1 5]-----[1 6]-----[1 7]\n===================================================\n{xp_required} xp until level {next_level}, You have {skill_points} SP to spend.",
+    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n                _____ MASSIVE XP PACK\n             /____ VC Status\n           /______________________ **(=[Completionist Role]=)**\n____/_____ Create Invites                     [Requires all skills]\n===================================================\n[1 8]-----[1 9]-----[2 0]               **More Comming Soon**\n===================================================\n{xp_required} xp until level {next_level}, You have {skill_points} SP to spend."
     ]
 
     if direction == "main":
@@ -84,7 +93,8 @@ def changePage(direction):
         return correct(level, next_level_percentage, message=skill_tree_pages[page])
 
 def correct(level, next_level_percentage, message):
-    progress_bar = int((((level * 5)) + (int(next_level_percentage) / 20) - page*25))
+    if level != max_level: progress_bar = int((((level * 5)) + (int(next_level_percentage) / 20) - page*25))
+    else: progress_bar = 25
     # Progress Bar Updater, (((level x 5) + (% to next level)) / 20) - (pageNUM x 25) << 'resets' bar every 5 levels
     #                                  (in 20% increments)^^     ^^(to get 20% 'chunks')
     if progress_bar < 0: progress_bar = 0 # if negative, set to 0
@@ -155,7 +165,7 @@ class purchase_dropdown(nextcord.ui.Select):
 
         super().__init__(placeholder="Select a skill to buy", min_values=1, max_values=1, options=options)
     
-    async def callback(self, interaction: nextcord.Interaction):
+    async def callback(self, interaction: nextcord.Interaction): # On dropdown click
         if interaction.user.id == userID:
             if skill_points > 0: # has skill points
                 if self.values[0] != "Close": # save if chose skill
@@ -168,14 +178,24 @@ class purchase_dropdown(nextcord.ui.Select):
                         updateSkillData(userID, skill_purchased)
 
                         role = skills[page][skill_purchased]["roleID"]
-                        if role == "n/a": pass # if there is no role
-                        else: # give role
+                        if role == "n/a": # if there is no role (XP packs, XP multipliers)
+                            if skill_purchased == 0.2: await updateXP(userID, Type="Pack_tiny") # tiny xp pack
+                            elif skill_purchased == 1.3: await updateXP(userID, Type="Pack_small") # small xp pack
+                            elif skill_purchased == 2.2: await updateXP(userID, Type="Pack_medium") # medium xp pack
+                            elif skill_purchased == 3.2: await updateXP(userID, Type="Pack_massive") # massive xp pack
+                            elif skill_purchased == 0.2: pass # new user data line, total multiplier
+                            elif skill_purchased == 2.4: pass
+
+                            message = changePage(direction="none")
+                            await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
+
+                        else: # give role ### Test everything
                             role = interaction.guild.get_role(role)
                             await interaction.user.add_roles(role)
-                        message = changePage(direction="none")    
-                        await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
-                        await interaction.followup.send("Granted "+str(role)+" role.", ephemeral=True)
-                        
+                            message = changePage(direction="none")
+                            await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
+                            await interaction.followup.send("Granted "+str(role)+" role.", ephemeral=True)
+
                 else: # is 'close'
                     message = changePage(direction="none")
                     await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))

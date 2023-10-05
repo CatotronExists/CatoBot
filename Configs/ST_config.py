@@ -3,7 +3,13 @@ level_xp_requirements = [0, 10, 40, 80, 150, 250, 350, 450, 550, 650, 750, 850, 
 #                        0   1   2   3    4    5    6    7    8    9   10   11   12    13    14    15    16    17    18    19    20
 
 lowerXP_gain = 1 # lowest amount of xp you can gain
-upperXP_gain = 15 # highest amount of xp you can gain
+upperXP_gain = 1500 # highest amount of xp you can gain
+# xp pack amounts
+XP_pack_tiny = 100
+XP_pack_small = 300
+XP_pack_medium = 1000
+XP_pack_massive = 3000
+max_level = 20
 
 skills = {
     0: {
@@ -18,7 +24,7 @@ skills = {
         },
         0.2: {
         "label": "Tiny XP Pack",
-        "description": "Grants you 100xp.",
+        "description": "Grants you "+str(XP_pack_tiny)+"xp.",
         "cost": 1,
         "value": 0.2,
         "prerequisites": [],
@@ -74,7 +80,7 @@ skills = {
         },
         1.3: {
         "label": "Small XP Pack",
-        "description": "Grants you 300xp.",
+        "description": "Grants you "+str(XP_pack_small)+"xp.",
         "cost": 1,
         "value": 1.3,
         "prerequisites": [0.2],
@@ -121,7 +127,7 @@ skills = {
         },
         2.2: {
         "label": "Medium XP Pack",
-        "description": "Grants you 1000xp.",
+        "description": "Grants you "+str(XP_pack_medium)+"xp.",
         "cost": 2,
         "value": 2.2,
         "prerequisites": [1.4],
@@ -168,7 +174,7 @@ skills = {
         },
         3.3: {
         "label": "MASSIVE XP PACK",
-        "description": "Grants you 5000xp.",
+        "description": "Grants you "+str(XP_pack_massive)+"xp.",
         "cost": 3,
         "value": 3.3,
         "prerequisites": [2.3,2.4],
@@ -181,7 +187,7 @@ skills = {
         "cost": 1,
         "value": 3.4,
         "prerequisites": [0.1, 0.2, 0.3, 0.4, 0.5, 1.1, 1.2, 1.3, 1.4, 1.5, 2.1, 2.2, 2.3, 2.4, 3.1, 3.2, 3.3], # every skill
-        "emoji": "🎨",
+        "emoji": "🏆",
         "roleID": 1159269069921452192
         }
     }

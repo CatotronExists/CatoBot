@@ -5,7 +5,8 @@ import datetime
 import nextcord
 from nextcord import Interaction, SlashOption
 from nextcord.ext import commands
-from Configs.Main_config import version, guild_ID, db_bot_stats, db_user_data, lowerXP_gain, upperXP_gain, level_xp_requirements
+from Configs.Main_config import version, guild_ID, db_bot_stats, db_user_data
+from Configs.ST_config import lowerXP_gain, upperXP_gain, level_xp_requirements, max_level
 from Keys import bot_token, client, dev_mode
 import pymongo
 import random
@@ -100,6 +101,7 @@ def updateUserData(userID, Type):
     skill_tree_progress = data["level_stats"]["skill_tree_progress"]
     skill_points = data["level_stats"]["skill_points"]
     purchased_nodes = data["level_stats"]["purchased_nodes"]
+    xp_multi = data["level_stats"]["xp_multi"]
 
     db_user_data.update_one(
         {"userID": userID},
@@ -113,7 +115,8 @@ def updateUserData(userID, Type):
                 "xp": xp,
                 "skill_tree_progress": skill_tree_progress,
                 "skill_points": skill_points,
-                "purchased_nodes": purchased_nodes
+                "purchased_nodes": purchased_nodes,
+                "xp_multi": xp_multi
             }
         }}
     )
@@ -132,7 +135,7 @@ def fetchBotData():
     data = db_bot_stats.find_one({"Commands_Used": {"$exists": True}})
     return data
 
-async def updateXP(userID):
+async def updateXP(userID, Type):
     data = db_user_data.find_one({"userID": userID})
     join_date = data["join_date"]
     messages_sent = data["messages_sent"]
@@ -142,17 +145,28 @@ async def updateXP(userID):
     skill_tree_progress = data["level_stats"]["skill_tree_progress"]
     skill_points = data["level_stats"]["skill_points"]
     purchased_nodes = data["level_stats"]["purchased_nodes"]
+    xp_multi = data["level_stats"]["xp_multi"]
 
     # xp calculation
-    xp_gain = random.randint(lowerXP_gain, upperXP_gain)
-    xp = xp + xp_gain
-    if xp >= level_xp_requirements[level+1]: # level up
-        level += 1
-        skill_points += 1
-        xp = 0
-        formatOutput(output="Level Up! "+str(userID)+" is now level "+str(level), status="Normal")
-        channel = bot.get_channel(level_channel)
-        await channel.send("Level Up! <@"+str(userID)+"> is now level "+str(level))
+    if Type == "Message": xp_gain = random.randint(lowerXP_gain, upperXP_gain) # gain xp on message
+    elif Type == "Pack_tiny": xp_gain = 100 # tiny pack
+    elif Type == "Pack_small": xp_gain = 500 # small pack
+    elif Type == "Pack_medium": xp_gain = 1000 # medium pack
+    elif Type == "Pack_massive": xp_gain = 3000 # massive pack
+
+    xp = xp + (xp_gain * (10 + xp_multi))
+    if level <= max_level: # level while not max
+        try: 
+            while xp >= level_xp_requirements[level+1]: # level up
+                xp = xp - level_xp_requirements[level+1]
+                print(xp)
+                level += 1
+                skill_points += 1
+                formatOutput(output="Level Up! "+str(userID)+" is now level "+str(level), status="Normal")
+                channel = bot.get_channel(level_channel)
+                await channel.send("Level Up! <@"+str(userID)+"> is now level "+str(level))
+        except Exception as e: pass # if a user hits max levvel with lots of overflow xp, this will stop it from looping
+    else: pass
 
     db_user_data.update_one(
         {"userID": userID},
@@ -166,7 +180,8 @@ async def updateXP(userID):
                 "xp": xp,
                 "skill_tree_progress": skill_tree_progress,
                 "skill_points": skill_points,
-                "purchased_nodes": purchased_nodes
+                "purchased_nodes": purchased_nodes,
+                "xp_multi": xp_multi
             }
         }}
     )
@@ -283,7 +298,8 @@ async def on_member_join(member: nextcord.Member):
                         "xp": 0,
                         "skill_tree_progress": 0,
                         "skill_points": 0,
-                        "purchased_nodes": [0]
+                        "purchased_nodes": [0],
+                        "xp_multi": 0
                         }
                     }
                 )
@@ -301,7 +317,7 @@ async def on_message(message: nextcord.message): # waits for message
         else: # user message
             userID = message.author.id
             updateUserData(userID, Type="Message")
-            await updateXP(userID)
+            await updateXP(userID, Type="Message")
     except Exception as e: formatOutput(output="    Failed to save message from "+str(userID)+" // Error: "+str(e), status="Warning")
 
 bot.run(bot_token)
