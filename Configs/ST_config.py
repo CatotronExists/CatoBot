@@ -3,7 +3,7 @@ level_xp_requirements = [0, 10, 40, 80, 150, 250, 350, 450, 550, 650, 750, 850, 
 #                        0   1   2   3    4    5    6    7    8    9   10   11   12    13    14    15    16    17    18    19    20
 
 lowerXP_gain = 1 # lowest amount of xp you can gain
-upperXP_gain = 1500 # highest amount of xp you can gain
+upperXP_gain = 15 # highest amount of xp you can gain
 # xp pack amounts
 XP_pack_tiny = 100
 XP_pack_small = 300
@@ -128,7 +128,7 @@ skills = {
         2.2: {
         "label": "Medium XP Pack",
         "description": "Grants you "+str(XP_pack_medium)+"xp.",
-        "cost": 2,
+        "cost": 1,
         "value": 2.2,
         "prerequisites": [1.4],
         "emoji": "🎁",
@@ -146,7 +146,7 @@ skills = {
         2.4: {
         "label": "1.25xp Multi",
         "description": "XP gain upped by 25%. PERMANENTLY. (Stacks)",
-        "cost": 2,
+        "cost": 1,
         "value": 2.4,
         "prerequisites": [2.2],
         "emoji": "📈",
@@ -175,7 +175,7 @@ skills = {
         3.3: {
         "label": "MASSIVE XP PACK",
         "description": "Grants you "+str(XP_pack_massive)+"xp.",
-        "cost": 3,
+        "cost": 2,
         "value": 3.3,
         "prerequisites": [2.3,2.4],
         "emoji": "📈",

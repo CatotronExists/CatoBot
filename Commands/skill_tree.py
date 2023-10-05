@@ -58,8 +58,8 @@ def changePage(direction):
     global page, main_page
 
     if level != max_level: 
-        next_level_percentage = int((xp / level_xp_requirements[next_level]) * 100)
         next_level = level + 1
+        next_level_percentage = int((xp / level_xp_requirements[next_level]) * 100)
         xp_required = level_xp_requirements[next_level] - xp
         main_page = int(level / 5)
     else: 
@@ -183,8 +183,17 @@ class purchase_dropdown(nextcord.ui.Select):
                             elif skill_purchased == 1.3: await updateXP(userID, Type="Pack_small") # small xp pack
                             elif skill_purchased == 2.2: await updateXP(userID, Type="Pack_medium") # medium xp pack
                             elif skill_purchased == 3.2: await updateXP(userID, Type="Pack_massive") # massive xp pack
-                            elif skill_purchased == 0.2: pass # new user data line, total multiplier
-                            elif skill_purchased == 2.4: pass
+                            elif skill_purchased == 0.3: # 10% multi
+                                db_user_data.find_one_and_update(
+                                    {"userID": userID},
+                                    {"$set": {"level_stats.xp_multi": + 0.1}}
+                                )
+                                
+                            elif skill_purchased == 2.4: # 25% multi
+                                db_user_data.find_one_and_update(
+                                    {"userID": userID},
+                                    {"$set": {"level_stats.xp_multi": + 0.25}}
+                                )
 
                             message = changePage(direction="none")
                             await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))

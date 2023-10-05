@@ -154,12 +154,17 @@ async def updateXP(userID, Type):
     elif Type == "Pack_medium": xp_gain = 1000 # medium pack
     elif Type == "Pack_massive": xp_gain = 3000 # massive pack
 
-    xp = xp + (xp_gain * (10 + xp_multi))
+    xp = float(round(xp + (xp_gain * (1 + xp_multi)), 2))
+
+    xp_str = str(xp)
+    if xp_str[:-2] == ".0": # Remove .0
+        xp_str = xp_str[:-2]
+    xp = float(xp_str)
+
     if level <= max_level: # level while not max
         try: 
             while xp >= level_xp_requirements[level+1]: # level up
                 xp = xp - level_xp_requirements[level+1]
-                print(xp)
                 level += 1
                 skill_points += 1
                 formatOutput(output="Level Up! "+str(userID)+" is now level "+str(level), status="Normal")
