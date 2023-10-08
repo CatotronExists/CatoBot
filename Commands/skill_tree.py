@@ -198,7 +198,7 @@ class purchase_dropdown(nextcord.ui.Select):
                             message = changePage(direction="none")
                             await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
 
-                        else: # give role ### Test everything
+                        else: # give role
                             role = interaction.guild.get_role(role)
                             await interaction.user.add_roles(role)
                             message = changePage(direction="none")
@@ -214,7 +214,6 @@ class purchase_dropdown(nextcord.ui.Select):
                 if self.values[0] != "Close": await interaction.followup.send("You don't have any skill points to spend.", ephemeral=True)
 
 class Command_skill_tree_Cog(commands.Cog):
-
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 

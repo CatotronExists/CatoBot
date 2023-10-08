@@ -5,7 +5,7 @@ import datetime
 import nextcord
 from nextcord import Interaction, SlashOption
 from nextcord.ext import commands
-from Configs.Main_config import version, guild_ID, db_bot_stats, db_user_data
+from Configs.Main_config import *
 from Configs.ST_config import lowerXP_gain, upperXP_gain, level_xp_requirements, max_level
 from Keys import bot_token, client, dev_mode
 import pymongo
@@ -25,11 +25,8 @@ CBOLD = '\033[1m'
 #                 #
 
 # Vars #
-extension_command_list = ["bot_stats", "user_lookup", "command_leaderboard", "skill_tree"]
-full_command_list = ["shutdown", "reload", "bot_stats", "user_lookup", "command_leaderboard", "skill_tree"]
-### Channels
-level_channel = 1158919090073784452
-welcome_channel = 739608668152135773
+extension_command_list = ["bot_stats", "user_lookup", "command_leaderboard", "skill_tree", "help"]
+full_command_list = ["shutdown", "reload", "bot_stats", "user_lookup", "command_leaderboard", "skill_tree", "help"]
 #      #
 
 ### Discord Setup
@@ -72,6 +69,9 @@ def updateCommandUsage(command):
         if command == "skill_tree": skill_tree_usage = data["skill_tree_usage"] + 1
         else: skill_tree_usage = data["skill_tree_usage"]
 
+        if command == "help": help_usage = data["help_usage"] + 1
+        else: help_usage = data["help_usage"]
+
         db_bot_stats.update_one(
             {"Commands_Used": {"$exists": True}},
             {"$set": {"Commands_Used": Commands_Used,
@@ -80,7 +80,8 @@ def updateCommandUsage(command):
             "bot_stats_usage": bot_stats_usage,
             "user_lookup_usage": user_lookup_usage,
             "command_leaderboard_usage": command_leaderboard_usage,
-            "skill_tree_usage": skill_tree_usage}}
+            "skill_tree_usage": skill_tree_usage,
+            "help_usage": help_usage}}
         )
         formatOutput(output="    Command Usage Successfully Saved", status="Good")
 
