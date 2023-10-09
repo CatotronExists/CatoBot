@@ -10,7 +10,9 @@ class Command_user_lookup_Cog(commands.Cog):
     @nextcord.slash_command(guild_ids=[guild_ID], name="user_lookup", description="Lookup stats for a user")
     async def user_lookup(self, interaction: nextcord.Interaction, user: nextcord.User = None):
         command = 'user_lookup'
-        searched_user_id = userID = interaction.user.id
+        userID = interaction.user.id
+        if user != None: searched_user_id = user.id
+        else: searched_user_id = userID
 
         if user == None: user = await self.bot.fetch_user(userID) # if no user is specified, default to the user who used the command
         user = str(user)
