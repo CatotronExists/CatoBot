@@ -6,7 +6,7 @@ import nextcord
 from nextcord import Interaction, SlashOption
 from nextcord.ext import commands
 from Configs.Main_config import *
-from Configs.ST_config import lowerXP_gain, upperXP_gain, level_xp_requirements, max_level
+from Configs.ST_config import lowerXP_gain, upperXP_gain, level_xp_requirements, max_level, skills
 from Keys import bot_token, client, dev_mode
 import pymongo
 import random
@@ -149,8 +149,8 @@ async def updateXP(userID, Type, message):
     xp_multi = data["level_stats"]["xp_multi"]
 
     # xp calculation
+    win = False
     if Type == "Message":  # gain xp on message & roll chance for pack
-        win = False
         channel = bot.get_channel(lucky_people_channel)
         xp_gain = random.randint(lowerXP_gain, upperXP_gain)
         roll = random.randint(1, 10000) # 1 in 10000 chance of a pack
@@ -158,8 +158,6 @@ async def updateXP(userID, Type, message):
         elif roll <= 10: xp_gain += 1000; win = "Medium" # medium, 1/1000 chance
         elif roll <= 30: xp_gain += 500; win = "Small" # small, 1/333 chance
         elif roll <= 100: xp_gain += 100; win = "Tiny" # tiny, 1/100 chance
-        
-        if win != False: await channel.send(f"<@{userID}> Recieved a {win} pack of XP! Containing {xp_gain}XP")
         
     elif Type == "Pack_tiny": xp_gain = 100 # tiny pack
     elif Type == "Pack_small": xp_gain = 500 # small pack
@@ -172,6 +170,8 @@ async def updateXP(userID, Type, message):
     if xp_str[:-2] == ".0": # Remove .0
         xp_str = xp_str[:-2]
     xp = float(xp_str)
+
+    if win != False: await channel.send(f"<@{userID}> Recieved a {win} pack of XP! Containing {xp_gain}XP")
 
     if level <= max_level: # level while not max
         try: 
@@ -300,12 +300,37 @@ async def on_member_join(member: nextcord.Member):
 
     try: # check for existing profile
         data = db_user_data.find_one({"userID": userID})
-        if data is not None: # update join date
-            formatOutput(output="    User already has a profile! Updating join_date!", status="Warning")
-            db_user_data.find_one_and_update(
-                {"userID": userID},
-                {"$set": {"join_date": member.joined_at.strftime("%d-%m-%Y %H:%M:%S")}}
-            )
+        if data is not None: 
+            try: # update join date
+                formatOutput(output="    User already has a profile! Updating join_date!", status="Warning")
+                db_user_data.find_one_and_update(
+                    {"userID": userID},
+                    {"$set": {"join_date": member.joined_at.strftime("%d-%m-%Y %H:%M:%S")}}
+                )
+                formatOutput(output="    Successful Update of join_date for "+str(userID), status="Good")
+            except Exception as e: formatOutput(output="    Failed to Update join_date for "+str(userID)+" // Error: "+str(e), status="Error")
+
+            try: # Give Roles
+                formatOutput(output="    Giving Roles to "+str(userID), status="Normal")
+
+                ## Basic Roles
+                role = bot.get_guild(guild_ID).get_role(everyone_role) 
+                await member.add_roles(role)
+                role = bot.get_guild(guild_ID).get_role(skill_tree_role)
+                await member.add_roles(role)
+
+                for i in data["level_stats"]["purchased_nodes"]:
+                    if i == 0: pass # skip placholder index
+                    else:
+                        print(i)
+                        roleID = skills[int(str(i).split(".")[0])][float(str(i).split(".")[1])]["roleID"]
+                        if roleID != "n/a": pass # skip if no role
+                        else: # give role
+                            role = bot.get_guild(guild_ID).get_role(roleID)
+                            await member.add_roles(role)
+    
+                formatOutput(output="    Successfully gave Roles to "+str(userID), status="Good")
+            except Exception as e: formatOutput(output="    Failed to Give Roles to "+str(userID)+" // Error: "+str(e), status="Error")
             
         else: # Create user profile
             try: 
