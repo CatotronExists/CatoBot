@@ -178,8 +178,11 @@ class purchase_dropdown(nextcord.ui.Select):
                         updateSkillData(userID, skill_purchased)
 
                         role = skills[page][skill_purchased]["roleID"]
-                        if role == "n/a": # if there is no role (XP packs, XP multipliers)
-                            if skill_purchased == 0.2: await updateXP(userID, Type="Pack_tiny", message=None) # tiny xp pack
+                        if role == "n/a": # if there is no role (XP packs, XP multipliers & color roles)
+                            if skill_purchased == 0.4: # Custom Color Picker
+                                message = changePage(direction="none")
+                                await interaction.response.edit_message(content=message, view=color_dropdown_view(interaction))
+                            elif skill_purchased == 0.2: await updateXP(userID, Type="Pack_tiny", message=None) # tiny xp pack
                             elif skill_purchased == 1.3: await updateXP(userID, Type="Pack_small", message=None) # small xp pack
                             elif skill_purchased == 2.2: await updateXP(userID, Type="Pack_medium", message=None) # medium xp pack
                             elif skill_purchased == 3.2: await updateXP(userID, Type="Pack_massive", message=None) # massive xp pack
@@ -195,8 +198,9 @@ class purchase_dropdown(nextcord.ui.Select):
                                     {"$set": {"level_stats.xp_multi": + 0.25}}
                                 )
 
-                            message = changePage(direction="none")
-                            await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
+                            if skill_purchased != 0.4: # if not picking color, close menu
+                                message = changePage(direction="none")
+                                await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
 
                         else: # give role
                             role = interaction.guild.get_role(role)
@@ -212,6 +216,36 @@ class purchase_dropdown(nextcord.ui.Select):
                 message = changePage(direction="none") 
                 await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
                 if self.values[0] != "Close": await interaction.followup.send("You don't have any skill points to spend.", ephemeral=True)
+
+class color_dropdown_view(nextcord.ui.View):
+    def __init__(self, interaction: nextcord.Interaction):
+        super().__init__(timeout=None)
+        self.add_item(color_dropdown())
+
+class color_dropdown(nextcord.ui.Select):
+    def __init__(self):
+        options = []
+        options.append(nextcord.SelectOption(label="Red", value="red", description="Pick Red", emoji="🟥"))
+        options.append(nextcord.SelectOption(label="Orange", value="orange", description="Pick Orange", emoji="🟧"))
+        options.append(nextcord.SelectOption(label="Yellow", value="yellow", description="Pick Yellow", emoji="🟨"))
+        options.append(nextcord.SelectOption(label="Green", value="green", description="Pick Green", emoji="🟩"))
+        options.append(nextcord.SelectOption(label="Blue", value="blue", description="Pick Blue", emoji="🟦"))
+        options.append(nextcord.SelectOption(label="Purple", value="purple", description="Pick Purple", emoji="🟪"))
+
+        super().__init__(placeholder="Select a color", min_values=1, max_values=1, options=options)
+    
+    async def callback(self, interaction: nextcord.Interaction): # On dropdown click
+        if interaction.user.id == userID:
+            if self.values[0] == "red": role = 1160775712333123584
+            elif self.values[0] == "orange": role = 1160776233181773914
+            elif self.values[0] == "yellow": role = 1160776338567872592
+            elif self.values[0] == "green": role = 1160776420587470928
+            elif self.values[0] == "blue": role = 1160776569191661658
+            elif self.values[0] == "purple": role = 1160776716256559175
+            role = interaction.guild.get_role(role)
+            await interaction.user.add_roles(role)
+            message = changePage(direction="none")
+            await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
 
 class Command_skill_tree_Cog(commands.Cog):
     def __init__(self, bot: commands.Bot):

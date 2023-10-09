@@ -47,7 +47,7 @@ skills = {
         "value": 0.4,
         "prerequisites": [0.2],
         "emoji": "🎨",
-        "roleID": 1158926421591347201 # just the placeholder role, [defaultID, color1ID, color2ID, color3ID]
+        "roleID": "n/a" # Role is picked with dropdown view
         },
         0.5: {
         "label": "Embed Perms",
