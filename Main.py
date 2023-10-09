@@ -136,7 +136,7 @@ def fetchBotData():
     data = db_bot_stats.find_one({"Commands_Used": {"$exists": True}})
     return data
 
-async def updateXP(userID, Type):
+async def updateXP(userID, Type, message):
     data = db_user_data.find_one({"userID": userID})
     join_date = data["join_date"]
     messages_sent = data["messages_sent"]
@@ -149,7 +149,18 @@ async def updateXP(userID, Type):
     xp_multi = data["level_stats"]["xp_multi"]
 
     # xp calculation
-    if Type == "Message": xp_gain = random.randint(lowerXP_gain, upperXP_gain) # gain xp on message
+    if Type == "Message":  # gain xp on message & roll chance for pack
+        win = False
+        channel = bot.get_channel(lucky_people_channel)
+        xp_gain = random.randint(lowerXP_gain, upperXP_gain)
+        roll = random.randint(1, 10000) # 1 in 10000 chance of a pack
+        if roll == 1: xp_gain += 3000; win = "Massive" # massive, 1/10000 chance
+        elif roll <= 10: xp_gain += 1000; win = "Medium" # medium, 1/1000 chance
+        elif roll <= 30: xp_gain += 500; win = "Small" # small, 1/333 chance
+        elif roll <= 100: xp_gain += 100; win = "Tiny" # tiny, 1/100 chance
+        
+        if win != False: await channel.send(f"<@{userID}> Recieved a {win} pack of XP! Containing {xp_gain}XP")
+        
     elif Type == "Pack_tiny": xp_gain = 100 # tiny pack
     elif Type == "Pack_small": xp_gain = 500 # small pack
     elif Type == "Pack_medium": xp_gain = 1000 # medium pack
@@ -289,7 +300,12 @@ async def on_member_join(member: nextcord.Member):
 
     try: # check for existing profile
         data = db_user_data.find_one({"userID": userID})
-        if data is not None: formatOutput(output="    User already has a profile!", status="Warning")
+        if data is not None: # update join date
+            formatOutput(output="    User already has a profile! Updating join_date!", status="Warning")
+            db_user_data.find_one_and_update(
+                {"userID": userID},
+                {"$set": {"join_date": member.joined_at.strftime("%d-%m-%Y %H:%M:%S")}}
+            )
             
         else: # Create user profile
             try: 
@@ -323,7 +339,7 @@ async def on_message(message: nextcord.message): # waits for message
         else: # user message
             userID = message.author.id
             updateUserData(userID, Type="Message")
-            await updateXP(userID, Type="Message")
+            await updateXP(userID, Type="Message", message=message)
     except Exception as e: formatOutput(output="    Failed to save message from "+str(userID)+" // Error: "+str(e), status="Warning")
 
 bot.run(bot_token)

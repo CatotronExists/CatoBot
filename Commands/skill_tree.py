@@ -179,10 +179,10 @@ class purchase_dropdown(nextcord.ui.Select):
 
                         role = skills[page][skill_purchased]["roleID"]
                         if role == "n/a": # if there is no role (XP packs, XP multipliers)
-                            if skill_purchased == 0.2: await updateXP(userID, Type="Pack_tiny") # tiny xp pack
-                            elif skill_purchased == 1.3: await updateXP(userID, Type="Pack_small") # small xp pack
-                            elif skill_purchased == 2.2: await updateXP(userID, Type="Pack_medium") # medium xp pack
-                            elif skill_purchased == 3.2: await updateXP(userID, Type="Pack_massive") # massive xp pack
+                            if skill_purchased == 0.2: await updateXP(userID, Type="Pack_tiny", message=None) # tiny xp pack
+                            elif skill_purchased == 1.3: await updateXP(userID, Type="Pack_small", message=None) # small xp pack
+                            elif skill_purchased == 2.2: await updateXP(userID, Type="Pack_medium", message=None) # medium xp pack
+                            elif skill_purchased == 3.2: await updateXP(userID, Type="Pack_massive", message=None) # massive xp pack
                             elif skill_purchased == 0.3: # 10% multi
                                 db_user_data.find_one_and_update(
                                     {"userID": userID},
