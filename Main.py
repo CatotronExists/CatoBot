@@ -172,6 +172,7 @@ async def updateXP(userID, Type, message):
     if xp_str[:-2] == ".0": # Remove .0
         xp_str = xp_str[:-2]
     xp = float(xp_str)
+    xp = int(xp)
 
     if win != False: await channel.send(f"<@{userID}> Recieved a {win} pack of XP! Containing {xp_gain}XP")
 
