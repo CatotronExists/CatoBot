@@ -1,5 +1,5 @@
 ## CatoBot
-A simple discord bot used in Catotron's World Discord Server
+A simple discord bot used in Catotron's World Discord Server\
 _"A place for everything Catotron (Content Creation and Development)"_
 
 ## Latest Version
@@ -8,7 +8,7 @@ v0.6 - Skill Treeeeee [12/10/2023]\
 📊Level System\
 🆘New Help Command\
 💥Discord Server Update\
-Read about it here: [message link]()
+Read about it here: [Not Out Yet]()
 
 Full Patch Notes: https://github.com/CatotronExists/CatoBot/releases/tag/v0.6
 
