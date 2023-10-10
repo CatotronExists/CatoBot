@@ -114,13 +114,17 @@ class skill_tree_view(nextcord.ui.View): # Skill Tree View
             if page != 0:
                 message = changePage(direction="prev")
                 await interaction.response.edit_message(content=message, view=self) # wont work on page 0
+        else: 
+            await interaction.response.send_message("nuh uh, You need to open your own skill tree menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
     
-    @nextcord.ui.button(label="Reset", style=nextcord.ButtonStyle.blurple, custom_id="skill_tree:reset")
-    async def reset(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+    @nextcord.ui.button(label="Main", style=nextcord.ButtonStyle.blurple, custom_id="skill_tree:main")
+    async def main(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         if interaction.user.id == userID: # Command user
             if page != main_page:
                 message = changePage(direction="main")
                 await interaction.response.edit_message(content=message, view=self) # wont if already on main page
+        else: 
+            await interaction.response.send_message("nuh uh, You need to open your own skill tree menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
 
     @nextcord.ui.button(label="Next", style=nextcord.ButtonStyle.green, custom_id="skill_tree:next")
     async def next(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
@@ -128,16 +132,22 @@ class skill_tree_view(nextcord.ui.View): # Skill Tree View
             if page != len(skill_tree_pages)-1:
                 message = changePage(direction="next")
                 await interaction.response.edit_message(content=message, view=self) # wont work on last page
+        else: 
+            await interaction.response.send_message("nuh uh, You need to open your own skill tree menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
     
     @nextcord.ui.button(label="Buy Skills", style=nextcord.ButtonStyle.green, custom_id="skill_tree:buy")
     async def buy(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         if interaction.user.id == userID: # Command user
             await interaction.response.edit_message(view=purchase_dropdown_view(interaction))
+        else: 
+            await interaction.response.send_message("nuh uh, You need to open your own skill tree menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
 
     @nextcord.ui.button(label="Close", style=nextcord.ButtonStyle.red, custom_id="skill_tree:close")
     async def close(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         if interaction.user.id == userID: # Command user
             await interaction.response.edit_message(view=None)
+        else: 
+            await interaction.response.send_message("nuh uh, You need to open your own skill tree menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
     
 class purchase_dropdown_view(nextcord.ui.View):
     def __init__(self, interaction: nextcord.Interaction):
@@ -216,6 +226,8 @@ class purchase_dropdown(nextcord.ui.Select):
                 message = changePage(direction="none") 
                 await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
                 if self.values[0] != "Close": await interaction.followup.send("You don't have any skill points to spend.", ephemeral=True)
+        else: 
+            await interaction.response.send_message("nuh uh, You need to open your own skill tree menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
 
 class color_dropdown_view(nextcord.ui.View):
     def __init__(self, interaction: nextcord.Interaction):
@@ -246,6 +258,8 @@ class color_dropdown(nextcord.ui.Select):
             await interaction.user.add_roles(role)
             message = changePage(direction="none")
             await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
+        else: 
+            await interaction.response.send_message("nuh uh, You need to open your own skill tree menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
 
 class Command_skill_tree_Cog(commands.Cog):
     def __init__(self, bot: commands.Bot):

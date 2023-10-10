@@ -153,7 +153,7 @@ async def updateXP(userID, Type, message):
     if Type == "Message":  # gain xp on message & roll chance for pack
         channel = bot.get_channel(lucky_people_channel)
         xp_gain = random.randint(lowerXP_gain, upperXP_gain)
-        roll = random.randint(1, 200) # 1 in 200 chance of a pack
+        roll = random.randint(1, 100) # 1 in 100 chance of a pack
         if roll == 1: 
             roll = random.randint(1, 100)
             if roll == 1: xp_gain += 3000; win = "Massive" # massive, 1/10000 chance
