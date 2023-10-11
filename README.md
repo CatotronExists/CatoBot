@@ -8,7 +8,7 @@ v0.6 - Skill Treeeeee [12/10/2023]\
 📊Level System\
 🆘New Help Command\
 💥Discord Server Update\
-Read about it here: [Not Out Yet]()
+Read about it here: [#announcements](https://discord.com/channels/739608667594162206/739609803365810176/1161435227793670215)
 
 Full Patch Notes: https://github.com/CatotronExists/CatoBot/releases/tag/v0.6
 
