@@ -5,9 +5,11 @@ import datetime
 import nextcord
 from nextcord import Interaction, SlashOption
 from nextcord.ext import commands
-from Config import version, guild_ID, db_bot_stats, db_user_data, db_bot_setup
-from Keys import bot_token, client, dev_mode, self_host
+from Configs.Main_config import *
+from Configs.ST_config import lowerXP_gain, upperXP_gain, level_xp_requirements, max_level, skills
+from Keys import bot_token, client, dev_mode
 import pymongo
+import random
 #         #
 
 # Terminal Colors #
@@ -23,8 +25,8 @@ CBOLD = '\033[1m'
 #                 #
 
 # Vars #
-extension_command_list = ["bot_stats", "user_lookup", "command_leaderboard"]
-full_command_list = ["shutdown", "reload", "bot_stats", "user_lookup", "command_leaderboard"]
+extension_command_list = ["bot_stats", "user_lookup", "command_leaderboard", "skill_tree", "help"]
+full_command_list = ["shutdown", "reload", "bot_stats", "user_lookup", "command_leaderboard", "skill_tree", "help"]
 #      #
 
 ### Discord Setup
@@ -63,7 +65,13 @@ def updateCommandUsage(command):
 
         if command == "command_leaderboard": command_leaderboard_usage = data["command_leaderboard_usage"] + 1
         else: command_leaderboard_usage = data["command_leaderboard_usage"]
-        
+
+        if command == "skill_tree": skill_tree_usage = data["skill_tree_usage"] + 1
+        else: skill_tree_usage = data["skill_tree_usage"]
+
+        if command == "help": help_usage = data["help_usage"] + 1
+        else: help_usage = data["help_usage"]
+
         db_bot_stats.update_one(
             {"Commands_Used": {"$exists": True}},
             {"$set": {"Commands_Used": Commands_Used,
@@ -71,7 +79,9 @@ def updateCommandUsage(command):
             "reload_usage": reload_usage,
             "bot_stats_usage": bot_stats_usage,
             "user_lookup_usage": user_lookup_usage,
-            "command_leaderboard_usage": command_leaderboard_usage}}
+            "command_leaderboard_usage": command_leaderboard_usage,
+            "skill_tree_usage": skill_tree_usage,
+            "help_usage": help_usage}}
         )
         formatOutput(output="    Command Usage Successfully Saved", status="Good")
 
@@ -87,17 +97,34 @@ def updateUserData(userID, Type):
     if Type == "Command": commands_sent = data["commands_sent"] + 1
     else: commands_sent = data["commands_sent"]
 
-    db_user_data.update_one(
-    {"userID": userID},
-    {"$set": {"userID": userID,
-    "join_date": join_date,
-    "messages_sent": messages_sent,
-    "commands_sent": commands_sent}}
-)
+    level = data["level_stats"]["level"]
+    xp = data["level_stats"]["xp"]
+    skill_tree_progress = data["level_stats"]["skill_tree_progress"]
+    skill_points = data["level_stats"]["skill_points"]
+    purchased_nodes = data["level_stats"]["purchased_nodes"]
+    xp_multi = data["level_stats"]["xp_multi"]
 
-def fetchUserData(user, searched_user_id):
+    db_user_data.update_one(
+        {"userID": userID},
+        {"$set": {
+            "userID": userID,
+            "join_date": join_date,
+            "messages_sent": messages_sent,
+            "commands_sent": commands_sent,                    
+            "level_stats": {
+                "level": level,
+                "xp": xp,
+                "skill_tree_progress": skill_tree_progress,
+                "skill_points": skill_points,
+                "purchased_nodes": purchased_nodes,
+                "xp_multi": xp_multi
+            }
+        }}
+    )
+
+def fetchUserData(searched_user_id):
     try:
-        formatOutput(output="    Finding Data for "+str(user), status="Normal")
+        formatOutput(output="    Finding Data for "+str(searched_user_id), status="Normal")
         data = db_user_data.find_one({"userID": searched_user_id})
         formatOutput(output="    Data Found", status="Good")
     except Exception as e: 
@@ -109,38 +136,77 @@ def fetchBotData():
     data = db_bot_stats.find_one({"Commands_Used": {"$exists": True}})
     return data
 
-### Startup ### DUE TO DOUBLE STARTUP, THIS WONT WORK
-# if self_host == True: error = False # Hosted Locally
-# else: # Using hosting Serivce
-#     print("Checking for last mode")
-#     result = db_bot_setup.find_one({"last_mode": {"$exists": True}})
-#     if result is not None: 
-#         mode = result["last_mode"]
-#         print("Bot was last "+mode)
+async def updateXP(userID, Type, message):
+    data = db_user_data.find_one({"userID": userID})
+    join_date = data["join_date"]
+    messages_sent = data["messages_sent"]
+    commands_sent = data["commands_sent"]
+    level = data["level_stats"]["level"]
+    xp = data["level_stats"]["xp"]
+    skill_tree_progress = data["level_stats"]["skill_tree_progress"]
+    skill_points = data["level_stats"]["skill_points"]
+    purchased_nodes = data["level_stats"]["purchased_nodes"]
+    xp_multi = data["level_stats"]["xp_multi"]
 
-#         if mode == "ONLINE":
-#             error = True
-#             print("Bot was last online, Turning OFF")
-#             db_bot_setup.update_one(
-#                 {"last_mode": "ONLINE"}, # find
-#                 {"$set": {"last_mode": "OFFLINE"}} # set
-#             )   
+    # xp calculation
+    win = False
+    if Type == "Message":  # gain xp on message & roll chance for pack
+        channel = bot.get_channel(lucky_people_channel)
+        xp_gain = random.randint(lowerXP_gain, upperXP_gain)
+        roll = random.randint(1, 100) # 1 in 100 chance of a pack
+        if roll == 1: 
+            roll = random.randint(1, 100)
+            if roll == 1: xp_gain += 3000; win = "Massive" # massive, 1/10000 chance
+            elif roll <= 5: xp_gain += 1000; win = "Medium" # medium, 1/1000 chance
+            elif roll <= 30: xp_gain += 500; win = "Small" # small, 1/333 chance
+            elif roll <= 100: xp_gain += 100; win = "Tiny" # tiny, 1/100 chance
+        
+    elif Type == "Pack_tiny": xp_gain = 100 # tiny pack
+    elif Type == "Pack_small": xp_gain = 500 # small pack
+    elif Type == "Pack_medium": xp_gain = 1000 # medium pack
+    elif Type == "Pack_massive": xp_gain = 3000 # massive pack
 
-#         elif mode == "OFFLINE": 
-#             error = False
-#             print("Bot was last offline, Turning ON")
-#             db_bot_setup.update_one(
-#                 {"last_mode": "OFFLINE"}, # find
-#                 {"$set": {"last_mode": "ONLINE"}} # set
-#             )   
-    
-#     else: 
-#         print("Could not find last status...Setting to ONLINE")
-#         error = False
-#         db_bot_setup.insert_one(
-#             {"last_mode": "ONLINE"}
-#         )
+    xp = float(round(xp + (xp_gain * (1 + xp_multi)), 2))
 
+    xp_str = str(xp)
+    if xp_str[:-2] == ".0": # Remove .0
+        xp_str = xp_str[:-2]
+    xp = float(xp_str)
+    xp = int(xp)
+
+    if win != False: await channel.send(f"<@{userID}> Recieved a {win} pack of XP! Containing {xp_gain}XP")
+
+    if level <= max_level: # level while not max
+        try: 
+            while xp >= level_xp_requirements[level+1]: # level up
+                xp = xp - level_xp_requirements[level+1]
+                level += 1
+                skill_points += 1
+                formatOutput(output="Level Up! "+str(userID)+" is now level "+str(level), status="Normal")
+                channel = bot.get_channel(level_channel)
+                await channel.send("Level Up! <@"+str(userID)+"> is now level "+str(level))
+        except Exception as e: pass # if a user hits max levvel with lots of overflow xp, this will stop it from looping
+    else: pass
+
+    db_user_data.update_one(
+        {"userID": userID},
+        {"$set": {
+            "userID": userID,
+            "join_date": join_date,
+            "messages_sent": messages_sent,
+            "commands_sent": commands_sent,                    
+            "level_stats": {
+                "level": level,
+                "xp": xp,
+                "skill_tree_progress": skill_tree_progress,
+                "skill_points": skill_points,
+                "purchased_nodes": purchased_nodes,
+                "xp_multi": xp_multi
+            }
+        }}
+    )
+
+### Startup
 startup_start_time = datetime.datetime.now().strftime('%M:%S.%f')[:-3]
 start_time = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
 print("<<<------ Catobot "+str(version)+" Terminal ------>>>")
@@ -150,12 +216,13 @@ print(CYELLOW +"Connecting to MongoDB..."+ CLEAR)
 try: # Ping MongoDB
     client.admin.command('ping')
     print(CGREEN + "    Successfully connected to MongoDB" + CLEAR)
+    error = False
 except Exception as e:
     error = True
     print(e)
     input(CRED + "    There was an error connecting to MongoDB\nError: " + str(e) + CLEAR)
 
-if error == True: error == True # END if no connection 
+if error == True: ready = False # END if no connection
 else:
     print(CBLUE + "--------------------------" + CLEAR)
     print("Bot is starting up...")
@@ -229,23 +296,64 @@ async def CommandName(interaction: nextcord.Interaction):
 @bot.event
 async def on_member_join(member: nextcord.Member):
     userID = member.id
-    channel = bot.get_channel(739608668152135773)
+    channel = bot.get_channel(welcome_channel)
     await channel.send("Welcome to Catotron's World, <@"+str(userID)+"> !")
     formatOutput(output="Member Joined: "+str(member)+" | ID: "+str(userID), status="Normal")
     formatOutput(output="    Checking for existing user profile...", status="Normal")
 
     try: # check for existing profile
         data = db_user_data.find_one({"userID": userID})
-        if data is not None: formatOutput(output="    User already has a profile!", status="Warning")
+        if data is not None: 
+            try: # update join date
+                formatOutput(output="    User already has a profile! Updating join_date!", status="Warning")
+                db_user_data.find_one_and_update(
+                    {"userID": userID},
+                    {"$set": {"join_date": member.joined_at.strftime("%d-%m-%Y %H:%M:%S")}}
+                )
+                formatOutput(output="    Successful Update of join_date for "+str(userID), status="Good")
+            except Exception as e: formatOutput(output="    Failed to Update join_date for "+str(userID)+" // Error: "+str(e), status="Error")
+
+            try: # Give Roles
+                formatOutput(output="    Giving Roles to "+str(userID), status="Normal")
+
+                ## Basic Roles
+                role = bot.get_guild(guild_ID).get_role(everyone_role) 
+                await member.add_roles(role)
+                role = bot.get_guild(guild_ID).get_role(skill_tree_role)
+                await member.add_roles(role)
+
+                for i in data["level_stats"]["purchased_nodes"]:
+                    if i == 0: pass # skip placholder index
+                    else:
+                        print(i)
+                        roleID = skills[int(str(i).split(".")[0])][float(str(i).split(".")[1])]["roleID"]
+                        if roleID != "n/a": pass # skip if no role
+                        else: # give role
+                            role = bot.get_guild(guild_ID).get_role(roleID)
+                            await member.add_roles(role)
+    
+                formatOutput(output="    Successfully gave Roles to "+str(userID), status="Good")
+            except Exception as e: formatOutput(output="    Failed to Give Roles to "+str(userID)+" // Error: "+str(e), status="Error")
             
         else: # Create user profile
             try: 
                 join_date = member.joined_at.strftime("%d-%m-%Y %H:%M:%S")
                 db_user_data.insert_one(
-                {"userID": userID,
-                "join_date": join_date,
-                "messages_sent": 0,
-                "commands_sent": 0})
+                    {"userID": userID,
+                    "join_date": join_date,
+                    "messages_sent": 0,
+                    "commands_sent": 0,                    
+                    "level_stats": {
+                        "level": 0,
+                        "xp": 0,
+                        "skill_tree_progress": 0,
+                        "skill_points": 0,
+                        "purchased_nodes": [0],
+                        "xp_multi": 0
+                        }
+                    }
+                )
+
                 formatOutput(output="    Successful Creation of user profile for "+str(userID), status="Good")
             except Exception as e: formatOutput(output="    Failed to Create user profile // Error: "+str(e), status="Error")
     except Exception as e: formatOutput(output="    Failed to Check for user profile // Error: "+str(e), status="Error")
@@ -259,6 +367,7 @@ async def on_message(message: nextcord.message): # waits for message
         else: # user message
             userID = message.author.id
             updateUserData(userID, Type="Message")
+            await updateXP(userID, Type="Message", message=message)
     except Exception as e: formatOutput(output="    Failed to save message from "+str(userID)+" // Error: "+str(e), status="Warning")
-        
+
 bot.run(bot_token)
