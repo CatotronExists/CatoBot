@@ -199,13 +199,13 @@ class purchase_dropdown(nextcord.ui.Select):
                             elif skill_purchased == 0.3: # 10% multi
                                 db_user_data.find_one_and_update(
                                     {"userID": userID},
-                                    {"$set": {"level_stats.xp_multi": + 0.1}}
+                                    {"$inc": {"level_stats.xp_multi": + 0.1}}
                                 )
                                 
                             elif skill_purchased == 2.4: # 25% multi
                                 db_user_data.find_one_and_update(
                                     {"userID": userID},
-                                    {"$set": {"level_stats.xp_multi": + 0.25}}
+                                    {"$inc": {"level_stats.xp_multi": + 0.25}}
                                 )
 
                             if skill_purchased != 0.4: # if not picking color, close menu
