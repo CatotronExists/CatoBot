@@ -25,8 +25,8 @@ CBOLD = '\033[1m'
 #                 #
 
 # Vars #
-extension_command_list = ["bot_stats", "user_lookup", "command_leaderboard", "skill_tree", "help"]
-full_command_list = ["shutdown", "reload", "bot_stats", "user_lookup", "command_leaderboard", "skill_tree", "help"]
+extension_command_list = ["bot_stats", "user_lookup", "command_leaderboard", "skill_tree", "help", "moderation"]
+full_command_list = ["shutdown", "reload", "bot_stats", "user_lookup", "command_leaderboard", "skill_tree", "help", "moderation"]
 #      #
 
 ### Discord Setup
@@ -182,7 +182,7 @@ async def shutdown(interaction: nextcord.Interaction):
         except Exception as e: formatOutput(output="    Shutdown Failed // Error: "+str(e), status="Error")
 
     else: # not Admin
-        await interaction.send("Insufficient Permissions\nMissing Administrator Permissions")
+        await interaction.send("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
         await saveData(command, userID, Type="Command")
         formatOutput(output="    Insufficient Permissions for "+str(userID), status="Warning")
 
@@ -208,7 +208,7 @@ async def CommandName(interaction: nextcord.Interaction):
         await saveData(command, userID, Type="Command")
 
     else: # not Admin
-        await interaction.send("Insufficient Permissions\nMissing Administrator Permissions")
+        await interaction.send("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
         await saveData(command, userID, Type="Command")
         formatOutput(output="    Insufficient Permissions for "+str(userID), status="Warning")
 
