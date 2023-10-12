@@ -3,6 +3,8 @@ A simple discord bot used in Catotron's World Discord Server\
 _"A place for everything Catotron (Content Creation and Development)"_
 
 ## Latest Version
+v0.6 - Hotfix-1 [12/10/2023]\
+🔧Fixed XP Multi not stacking\
 v0.6 - Skill Treeeeee [12/10/2023]\
 🌳Perk Tree\
 📊Level System\
