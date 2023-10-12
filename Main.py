@@ -42,132 +42,63 @@ def formatOutput(output, status):
     elif status == "Warning": print(CYELLOW +"| "+str(current_time)+" || "+output+ CLEAR)
 
 ### Save Functions
-async def save(command, userID, Type):
+async def saveData(command, userID, Type):
     updateCommandUsage(command)
     updateUserData(userID, Type)
 
 def updateCommandUsage(command):
-    try:
-        data = db_bot_stats.find_one({"Commands_Used": {"$exists": True}})
-
-        Commands_Used = data["Commands_Used"] + 1 # always + 1
-        if command == "shutdown": shutdown_usage = data["shutdown_usage"] + 1
-        else: shutdown_usage = data["shutdown_usage"]
-
-        if command == "reload": reload_usage = data["reload_usage"] + 1
-        else: reload_usage = data["reload_usage"]
-
-        if command == "bot_stats": bot_stats_usage = data["bot_stats_usage"] + 1
-        else: bot_stats_usage = data["bot_stats_usage"]
-
-        if command == "user_lookup": user_lookup_usage = data["user_lookup_usage"] + 1
-        else: user_lookup_usage = data["user_lookup_usage"]
-
-        if command == "command_leaderboard": command_leaderboard_usage = data["command_leaderboard_usage"] + 1
-        else: command_leaderboard_usage = data["command_leaderboard_usage"]
-
-        if command == "skill_tree": skill_tree_usage = data["skill_tree_usage"] + 1
-        else: skill_tree_usage = data["skill_tree_usage"]
-
-        if command == "help": help_usage = data["help_usage"] + 1
-        else: help_usage = data["help_usage"]
-
-        db_bot_stats.update_one(
-            {"Commands_Used": {"$exists": True}},
-            {"$set": {"Commands_Used": Commands_Used,
-            "shutdown_usage": shutdown_usage,
-            "reload_usage": reload_usage,
-            "bot_stats_usage": bot_stats_usage,
-            "user_lookup_usage": user_lookup_usage,
-            "command_leaderboard_usage": command_leaderboard_usage,
-            "skill_tree_usage": skill_tree_usage,
-            "help_usage": help_usage}}
-        )
+    try: # Command Usage
+        db_bot_stats.find_one_and_update({"Commands_Used": {"$exists": True}}, {"$inc": {"Commands_Used": + 1, command+"_usage": + 1}}) # +1 to Commands Used, then also +1 to the command used
         formatOutput(output="    Command Usage Successfully Saved", status="Good")
 
-    except Exception as e: formatOutput(output="    Error occured while saving // Error: "+str(e), status="Error")
+    except Exception as e: 
+        formatOutput(output="    Error occured while saving Command Usage // Error: "+str(e), status="Error")
 
-def updateUserData(userID, Type): 
-    data = db_user_data.find_one({"userID": userID})
-    join_date = data["join_date"]
+def updateUserData(userID, Type):
+    try: # User Data
+        db_user_data.find_one_and_update({"userID": userID}, {"$inc": {Type.lower()+"s_sent": + 1}}) # +1 to {type}_sent
 
-    if Type == "Message": messages_sent = data["messages_sent"] + 1
-    else: messages_sent = data["messages_sent"]
-
-    if Type == "Command": commands_sent = data["commands_sent"] + 1
-    else: commands_sent = data["commands_sent"]
-
-    level = data["level_stats"]["level"]
-    xp = data["level_stats"]["xp"]
-    skill_tree_progress = data["level_stats"]["skill_tree_progress"]
-    skill_points = data["level_stats"]["skill_points"]
-    purchased_nodes = data["level_stats"]["purchased_nodes"]
-    xp_multi = data["level_stats"]["xp_multi"]
-
-    db_user_data.update_one(
-        {"userID": userID},
-        {"$set": {
-            "userID": userID,
-            "join_date": join_date,
-            "messages_sent": messages_sent,
-            "commands_sent": commands_sent,                    
-            "level_stats": {
-                "level": level,
-                "xp": xp,
-                "skill_tree_progress": skill_tree_progress,
-                "skill_points": skill_points,
-                "purchased_nodes": purchased_nodes,
-                "xp_multi": xp_multi
-            }
-        }}
-    )
+    except Exception as e: 
+        formatOutput(output="    Error occured while saving "+Type+" // Error: "+str(e), status="Error")
 
 def fetchUserData(searched_user_id):
     try:
         formatOutput(output="    Finding Data for "+str(searched_user_id), status="Normal")
         data = db_user_data.find_one({"userID": searched_user_id})
         formatOutput(output="    Data Found", status="Good")
+
     except Exception as e: 
         formatOutput(output="    Error Encountered when finding data // Error: "+str(e), status="Error")
         data = "Error Encountered when finding data!"
-    return data
 
-def fetchBotData():
-    data = db_bot_stats.find_one({"Commands_Used": {"$exists": True}})
-    return data
+    finally: return data
 
 async def updateXP(userID, Type, message):
     data = db_user_data.find_one({"userID": userID})
-    join_date = data["join_date"]
-    messages_sent = data["messages_sent"]
-    commands_sent = data["commands_sent"]
     level = data["level_stats"]["level"]
     xp = data["level_stats"]["xp"]
-    skill_tree_progress = data["level_stats"]["skill_tree_progress"]
     skill_points = data["level_stats"]["skill_points"]
-    purchased_nodes = data["level_stats"]["purchased_nodes"]
     xp_multi = data["level_stats"]["xp_multi"]
 
-    # xp calculation
+    # XP Calculation
     win = False
     if Type == "Message":  # gain xp on message & roll chance for pack
         channel = bot.get_channel(lucky_people_channel)
         xp_gain = random.randint(lowerXP_gain, upperXP_gain)
         roll = random.randint(1, 100) # 1 in 100 chance of a pack
-        if roll == 1: 
+        if roll == 1:
             roll = random.randint(1, 100)
-            if roll == 1: xp_gain += 3000; win = "Massive" # massive, 1/10000 chance
-            elif roll <= 5: xp_gain += 1000; win = "Medium" # medium, 1/1000 chance
-            elif roll <= 30: xp_gain += 500; win = "Small" # small, 1/333 chance
-            elif roll <= 100: xp_gain += 100; win = "Tiny" # tiny, 1/100 chance
-        
+            if roll == 1: xp_gain += 3000; win = "Massive" # massive, 1/100 chance
+            elif roll <= 5: xp_gain += 1000; win = "Medium" # medium, 5/100 chance
+            elif roll <= 30: xp_gain += 500; win = "Small" # small, 30/100 chance
+            elif roll <= 100: xp_gain += 100; win = "Tiny" # tiny, 70/100 chance
+
     elif Type == "Pack_tiny": xp_gain = 100 # tiny pack
     elif Type == "Pack_small": xp_gain = 500 # small pack
     elif Type == "Pack_medium": xp_gain = 1000 # medium pack
     elif Type == "Pack_massive": xp_gain = 3000 # massive pack
 
     xp = float(round(xp + (xp_gain * (1 + xp_multi)), 2))
-
     xp_str = str(xp)
     if xp_str[:-2] == ".0": # Remove .0
         xp_str = xp_str[:-2]
@@ -177,7 +108,7 @@ async def updateXP(userID, Type, message):
     if win != False: await channel.send(f"<@{userID}> Recieved a {win} pack of XP! Containing {xp_gain}XP")
 
     if level <= max_level: # level while not max
-        try: 
+        try:
             while xp >= level_xp_requirements[level+1]: # level up
                 xp = xp - level_xp_requirements[level+1]
                 level += 1
@@ -188,23 +119,13 @@ async def updateXP(userID, Type, message):
         except Exception as e: pass # if a user hits max levvel with lots of overflow xp, this will stop it from looping
     else: pass
 
-    db_user_data.update_one(
+    db_user_data.find_one_and_update(
         {"userID": userID},
         {"$set": {
-            "userID": userID,
-            "join_date": join_date,
-            "messages_sent": messages_sent,
-            "commands_sent": commands_sent,                    
-            "level_stats": {
-                "level": level,
-                "xp": xp,
-                "skill_tree_progress": skill_tree_progress,
-                "skill_points": skill_points,
-                "purchased_nodes": purchased_nodes,
-                "xp_multi": xp_multi
-            }
-        }}
-    )
+                "level_stats.level": level,
+                "level_stats.xp": xp,
+                "level_stats.skill_points": skill_points
+    }})
 
 ### Startup
 startup_start_time = datetime.datetime.now().strftime('%M:%S.%f')[:-3]
@@ -254,7 +175,7 @@ async def shutdown(interaction: nextcord.Interaction):
 
     if interaction.user.guild_permissions.administrator == True: # is Admin
         await interaction.send("Shutting Down")
-        await save(command, userID, Type="Command")
+        await saveData(command, userID, Type="Command")
         try: 
             formatOutput(output="    Shutting Down Bot", status="Good")
             await bot.close()
@@ -262,7 +183,7 @@ async def shutdown(interaction: nextcord.Interaction):
 
     else: # not Admin
         await interaction.send("Insufficient Permissions\nMissing Administrator Permissions")
-        await save(command, userID, Type="Command")
+        await saveData(command, userID, Type="Command")
         formatOutput(output="    Insufficient Permissions for "+str(userID), status="Warning")
 
 # Reload
@@ -277,21 +198,21 @@ async def CommandName(interaction: nextcord.Interaction):
 
         formatOutput(output="Refreshing Commands", status="Normal")
         for i in extension_command_list:
-            try: 
+            try:
                 bot.reload_extension("Commands."+i)
                 formatOutput(output="    /"+i+" Successfully Refreshed", status="Good")
-            except Exception as e: 
+            except Exception as e:
                 formatOutput(output="    /"+i+" Failed to Reload // Error: "+str(e), status="Warning")
 
         await interaction.send("Commands Reloaded")
-        await save(command, userID, Type="Command")
+        await saveData(command, userID, Type="Command")
 
     else: # not Admin
         await interaction.send("Insufficient Permissions\nMissing Administrator Permissions")
-        await save(command, userID, Type="Command")
+        await saveData(command, userID, Type="Command")
         formatOutput(output="    Insufficient Permissions for "+str(userID), status="Warning")
 
-### Passive Commands 
+### Passive Commands
 # Member Join
 @bot.event
 async def on_member_join(member: nextcord.Member):
@@ -331,18 +252,18 @@ async def on_member_join(member: nextcord.Member):
                         else: # give role
                             role = bot.get_guild(guild_ID).get_role(roleID)
                             await member.add_roles(role)
-    
+
                 formatOutput(output="    Successfully gave Roles to "+str(userID), status="Good")
             except Exception as e: formatOutput(output="    Failed to Give Roles to "+str(userID)+" // Error: "+str(e), status="Error")
-            
+
         else: # Create user profile
-            try: 
+            try:
                 join_date = member.joined_at.strftime("%d-%m-%Y %H:%M:%S")
                 db_user_data.insert_one(
                     {"userID": userID,
                     "join_date": join_date,
                     "messages_sent": 0,
-                    "commands_sent": 0,                    
+                    "commands_sent": 0,
                     "level_stats": {
                         "level": 0,
                         "xp": 0,
@@ -361,7 +282,7 @@ async def on_member_join(member: nextcord.Member):
 # on message
 @bot.event
 async def on_message(message: nextcord.message): # waits for message
-    try: 
+    try:
         if message.author.bot: # ignores itself (bot)
             pass
         else: # user message

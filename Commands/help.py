@@ -1,7 +1,7 @@
 import nextcord
 import datetime
 from nextcord.ext import commands
-from Main import formatOutput, save, guild_ID
+from Main import formatOutput, saveData, guild_ID
 from Configs.Main_config import rule_channel, announcement_channel
 
 class Command_help_Cog(commands.Cog):
@@ -23,7 +23,7 @@ class Command_help_Cog(commands.Cog):
         elif searched_command == "skill_tree": await interaction.send(f"**Help Menu** | /{searched_command}\nThe skill tree is a different take on the typical level system.\nGain XP by sending messages. There is a rare chance of getting bonus xp 'packs'.\nWhen you reach a new level you gain a Skill Point (SP). These are spent buying skills in /skill_tree.\nTo buy a perk you need to have the required skill, these can be seen by the lines linking them together.\nYou have to own the previous skill to purchase the next!")
         else: # open help menu
             await interaction.send(f"**Help Menu**\n\nRules: {channel1.mention}\nLatest News/Announcements: {channel2.mention}\nIf you need to contact a mod go here: (soon)\n--------------------------------------------------------\nType /help [command] to get information on that command.")
-        await save(command, userID, Type="Command")
+        await saveData(command, userID, Type="Command")
 
 def setup(bot):
     bot.add_cog(Command_help_Cog(bot))

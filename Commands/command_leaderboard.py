@@ -1,7 +1,8 @@
 import nextcord
 import datetime
 from nextcord.ext import commands
-from Main import formatOutput, save, guild_ID, fetchBotData
+from Configs.Main_config import db_bot_stats
+from Main import formatOutput, saveData, guild_ID
 
 class Command_command_leaderboard_Cog(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -14,7 +15,7 @@ class Command_command_leaderboard_Cog(commands.Cog):
         formatOutput(output="/"+command+" Used by ("+str(userID)+")", status="Normal")
         await interaction.response.defer(with_message=True)
 
-        data = fetchBotData()
+        data = db_bot_stats.find_one({"Commands_Used": {"$exists": True}})
         
         if data is not None:
             leaderboard_data = []
@@ -31,7 +32,7 @@ class Command_command_leaderboard_Cog(commands.Cog):
             leaderboard_data[i] = leaderboard_data[i].replace(' : ', ': ') # push ':' next to usage
         await interaction.send("Command Leaderboard for Catotron's World\n"+'\n'.join(leaderboard_data))
 
-        await save(command, userID, Type="Command")
+        await saveData(command, userID, Type="Command")
 
 def setup(bot):
     bot.add_cog(Command_command_leaderboard_Cog(bot))

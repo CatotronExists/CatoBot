@@ -1,6 +1,6 @@
 import nextcord
 from nextcord.ext import commands
-from Main import formatOutput, save, guild_ID, fetchUserData
+from Main import formatOutput, saveData, guild_ID, fetchUserData
 from Configs.ST_config import max_level
 
 class Command_user_lookup_Cog(commands.Cog):
@@ -37,7 +37,7 @@ class Command_user_lookup_Cog(commands.Cog):
         except Exception as e: # replies with error message
             await interaction.send(data)
         finally: # then save
-            await save(command, userID, Type="Command")
+            await saveData(command, userID, Type="Command")
 
 def setup(bot):
     bot.add_cog(Command_user_lookup_Cog(bot))

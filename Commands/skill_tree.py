@@ -1,47 +1,33 @@
 import nextcord
 import datetime
 from nextcord.ext import commands
-from Main import formatOutput, save, guild_ID, updateXP
+from Main import formatOutput, saveData, guild_ID, updateXP
 from Configs.Main_config import db_user_data
 from Configs.ST_config import skills, skill_number, level_xp_requirements, max_level
 
 def updateSkillData(userID, skill_purchased):
     formatOutput(output="Skill ["+str(skill_purchased)+"] Purchased by ("+str(userID)+")", status="Normal")
 
-    data = db_user_data.find_one({"userID": userID})
-    join_date = data["join_date"]
-    messages_sent = data["messages_sent"]
-    commands_sent = data["commands_sent"]
-    level = data["level_stats"]["level"]
-    xp = data["level_stats"]["xp"]
+    # Data Calculations
+    try: 
+        data = db_user_data.find_one({"userID": userID})
+        skill_points = data["level_stats"]["skill_points"] - skills[page][skill_purchased]["cost"] #(skill_points - cost)
+        purchased_nodes = data["level_stats"]["purchased_nodes"]
+        purchased_nodes.append(skill_purchased)
+        purchased_nodes.sort()
+        skill_tree_progress = data["level_stats"]["skill_tree_progress"]
+        skill_tree_progress = len(purchased_nodes) - 1
 
-    skill_points = data["level_stats"]["skill_points"] - skills[page][skill_purchased]["cost"] #(skill_points - cost)
-    purchased_nodes = data["level_stats"]["purchased_nodes"]
-    purchased_nodes.append(skill_purchased)
-    purchased_nodes.sort()
-
-    skill_tree_progress = data["level_stats"]["skill_tree_progress"]
-    skill_tree_progress = len(purchased_nodes) - 1
-    xp_multi = data["level_stats"]["xp_multi"]
-
-    db_user_data.update_one(
+        db_user_data.find_one_and_update(
         {"userID": userID},
         {"$set": {
-            "userID": userID,
-            "join_date": join_date,
-            "messages_sent": messages_sent,
-            "commands_sent": commands_sent,                    
-            "level_stats": {
-                "level": level,
-                "xp": xp,
-                "skill_tree_progress": skill_tree_progress,
-                "skill_points": skill_points,
-                "purchased_nodes": purchased_nodes,
-                "xp_multi": xp_multi
-            }
-        }}
-    )
-    formatOutput(output="    Saved Purchase of ["+str(skill_purchased)+"] by ("+str(userID)+")", status="Good")
+                "level_stats.skill_tree_progress": skill_tree_progress,
+                "level_stats.skill_points": skill_points,
+                "level_stats.purchased_nodes": purchased_nodes     
+        }})
+        formatOutput(output="    Saved Purchase of ["+str(skill_purchased)+"] by ("+str(userID)+")", status="Good")
+
+    except Exception as e: formatOutput(output="    Failed to save Purchase of ["+str(skill_purchased)+"] by ("+str(userID)+") // Error: "+str(e), status="Error")
 
 def changePage(direction):
     # get user data
@@ -199,13 +185,13 @@ class purchase_dropdown(nextcord.ui.Select):
                             elif skill_purchased == 0.3: # 10% multi
                                 db_user_data.find_one_and_update(
                                     {"userID": userID},
-                                    {"$set": {"level_stats.xp_multi": + 0.1}}
+                                    {"$inc": {"level_stats.xp_multi": + 0.1}}
                                 )
                                 
                             elif skill_purchased == 2.4: # 25% multi
                                 db_user_data.find_one_and_update(
                                     {"userID": userID},
-                                    {"$set": {"level_stats.xp_multi": + 0.25}}
+                                    {"$inc": {"level_stats.xp_multi": + 0.25}}
                                 )
 
                             if skill_purchased != 0.4: # if not picking color, close menu
@@ -279,7 +265,7 @@ class Command_skill_tree_Cog(commands.Cog):
         message = changePage(direction="main")
 
         await interaction.send(message, view=skill_tree_view(interaction))
-        await save(command, userID, Type="Command")
+        await saveData(command, userID, Type="Command")
 
 def setup(bot):
     bot.add_cog(Command_skill_tree_Cog(bot))
