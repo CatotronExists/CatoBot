@@ -109,8 +109,6 @@ class skill_tree_view(nextcord.ui.View): # Skill Tree View
             if page != main_page:
                 message = changePage(direction="main")
                 await interaction.response.edit_message(content=message, view=self) # wont if already on main page
-        else: 
-            await interaction.response.send_message("nuh uh, You need to open your own skill tree menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
 
     @nextcord.ui.button(label="Next", style=nextcord.ButtonStyle.green, custom_id="skill_tree:next")
     async def next(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):

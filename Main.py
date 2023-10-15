@@ -182,7 +182,7 @@ async def shutdown(interaction: nextcord.Interaction):
         except Exception as e: formatOutput(output="    Shutdown Failed // Error: "+str(e), status="Error")
 
     else: # not Admin
-        await interaction.send("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
+        await interaction.send("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
         await saveData(command, userID, Type="Command")
         formatOutput(output="    Insufficient Permissions for "+str(userID), status="Warning")
 
@@ -208,7 +208,7 @@ async def CommandName(interaction: nextcord.Interaction):
         await saveData(command, userID, Type="Command")
 
     else: # not Admin
-        await interaction.send("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
+        await interaction.send("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
         await saveData(command, userID, Type="Command")
         formatOutput(output="    Insufficient Permissions for "+str(userID), status="Warning")
 
@@ -270,10 +270,32 @@ async def on_member_join(member: nextcord.Member):
                         "skill_tree_progress": 0,
                         "skill_points": 0,
                         "purchased_nodes": [0],
-                        "xp_multi": 0
+                        "xp_multi": 1
+                    },
+                    "moderation_data": {
+                        "warns": {
+                            "warn_count": 0,
+                            "warn_timestamps": [],
+                            "warn_reasons": []
+                        },
+                        "kicks": {
+                            "kick_count": 0,
+                            "kick_timestamps": [],
+                            "kick_reasons": []
+                        },
+                        "bans": {
+                            "ban_count": 0,
+                            "ban_timestamps": [],
+                            "ban_reasons": []
+                        },
+                        "mutes": {
+                            "mute_count": 0,
+                            "mute_timestamps": [],
+                            "mute_reasons": []
                         }
                     }
-                )
+                }
+            )
 
                 formatOutput(output="    Successful Creation of user profile for "+str(userID), status="Good")
             except Exception as e: formatOutput(output="    Failed to Create user profile // Error: "+str(e), status="Error")

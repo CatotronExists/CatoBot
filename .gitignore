@@ -14,3 +14,7 @@
 **/Commands/atemplate.py
 
 # Unfinished
+**/Commands/ban.py
+**/Commands/kick.py
+**/Commands/mute.py
+**/Commands/warn.py

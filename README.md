@@ -27,16 +27,20 @@ Full Patch Notes: https://github.com/CatotronExists/CatoBot/releases/tag/v0.6
 {Optional} [Required]\
 Use /help [command] for more information!
 
+**General Commands**\
 /skill_tree - Opens Skill Tree Menu\
 /help [command] - Opens Help Menu for specified command\
 /command_leaderboard - Shows Leaderboard for command usage\
 /user_lookup {user} - Shows stats for specified user, leave the {user} blank to search yourself\
-/bot_stats - Shows basic stats for the bot like, uptime and version\
-/reload - Reloads all commands **Admin Only**\
-/shutdown - Shuts off the bot **Admin Only**
+/bot_stats - Shows basic stats for the bot like, uptime and version
+
+**Admin Commands**\
+/moderation [user] **IN DEVELOPMENT** - Opens Moderation Menu\
+/reload - Reloads all commands\
+/shutdown - Shuts off the bot
 
 ### Upcoming Features
-- Moderation
+- Moderation (v0.7)
 - Socials Commands
 - Games
 - More Skill Tree Skills
