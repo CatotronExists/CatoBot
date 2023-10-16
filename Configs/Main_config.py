@@ -1,7 +1,7 @@
 ### CATOBOT CONFIG ###
 from Keys import db
 
-version = "v0.7-d-4"
+version = "v0.7-d-5"
 guild_ID = 739608667594162206
 
 # Channels

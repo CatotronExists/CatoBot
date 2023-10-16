@@ -1,7 +1,7 @@
 import nextcord
 from nextcord.ext import commands
 from Main import formatOutput, saveData, guild_ID, fetchUserData
-from Configs.ST_config import max_level
+from Configs.ST_config import max_level, skill_number
 
 class Command_user_lookup_Cog(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -42,7 +42,7 @@ class Command_user_lookup_Cog(commands.Cog):
             if level == max_level: embed.add_field(name="Overflow XP", value=xp, inline=True)
             else: embed.add_field(name="XP", value=xp, inline=True)
             embed.add_field(name="XP Multi", value=xp_multi, inline=True)
-            embed.add_field(name="Skill Tree Progress", value=skill_tree_progress, inline=True)
+            embed.add_field(name="Skill Tree Progress", value=f"{skill_tree_progress}/{skill_number}", inline=True)
             await interaction.send(embed=embed)
         except Exception as e: # replies with error message
             await interaction.send(data)

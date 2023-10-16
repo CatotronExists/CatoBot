@@ -17,7 +17,11 @@ class Command_bot_stats_Cog(commands.Cog):
 
         current_time = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
         uptime = datetime.datetime.strptime(current_time, '%d-%m-%Y %H:%M:%S') - datetime.datetime.strptime(start_time, '%d-%m-%Y %H:%M:%S')
-        await interaction.send("Bot Stats\nCurrent Version: "+str(version)+"\nBot Uptime: "+str(uptime)+" // Online Since "+str(start_time)+" AEST")
+        embed = nextcord.Embed(color=0xff6100, title="Bot Stats", description="Bot Stats for CatoBot", type="rich")
+        embed.add_field(name="Current Version", value=version, inline=True)
+        embed.add_field(name="Bot Uptime", value=str(uptime)+" // Online Since "+str(start_time)+" AEST", inline=True)
+        embed.set_footer(text="wow, numbers")
+        await interaction.send(embed=embed)
         await saveData(command, userID, Type="Command")
 
 def setup(bot):
