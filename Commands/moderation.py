@@ -397,7 +397,7 @@ class Command_moderation_Cog(commands.Cog):
                     else: avatar = searched_user_id.display_avatar
 
                     color = interaction.user.color
-                    embed = nextcord.Embed(color=color, title="Moderation Menu", description=f"Moderation Menu for {searched_username} | ID:{user.id}",type="rich")
+                    embed = nextcord.Embed(color=color, title="Moderation Menu", description=f"Moderation Menu for {searched_username} | ID:{user.id}", type="rich")
                     embed.set_thumbnail(url=avatar)
                     embed.add_field(name="Join Date", value=join_date, inline=True)
                     embed.add_field(name="Messages Sent", value=messages_sent, inline=True)
