@@ -44,6 +44,7 @@ class Command_user_lookup_Cog(commands.Cog):
             embed.add_field(name="XP Multi", value=xp_multi, inline=True)
             embed.add_field(name="Skill Tree Progress", value=f"{skill_tree_progress}/{skill_number}", inline=True)
             await interaction.send(embed=embed)
+
         except Exception as e: # replies with error message
             await interaction.send(data)
         finally: # then save

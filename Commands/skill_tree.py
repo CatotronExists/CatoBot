@@ -57,10 +57,10 @@ def changePage(direction):
     ### Pages
     global skill_tree_pages
     skill_tree_pages = [
-    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n|_ Reaction Perms   _ Custom Color              _________\n|_ Tiny XP Pack     /                              |\n|  |________________|   _ Embed Perms        |\n|_ 1.10xp Multi    \\___|_________________|_________\n===================================================\n[ 0 ]-----[ 1 ]-----[ 2 ]-----[ 3 ]-----[ 4 ]-----[ 5 ]\n===================================================\n{xp_required} xp until level {next_level}, You have {skill_points} SP to spend.",
-    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n____ Media Perms ________  _  _____ /report Command __\n        __ External Emojis ___/   \_ External Stickers ___\n____/                               /                                              /\n         \\\__ Small XP Pack __/              Talk in Threads ___/\n===================================================\n[ 6 ]-----[ 7 ]-----[ 8 ]-----[ 9 ]-----[1 0]-----[1 1]\n===================================================\n{xp_required} xp until level {next_level}, You have {skill_points} SP to spend.",
-    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n___ _______________________________________ \n       |_ Nickname Perms                  Medium XP Pack _|\n                   Tester Role _|                  |_ 1.25xp Multi\n                   |______________________________|__________\n===================================================\n[1 2]-----[1 3]-----[1 4]-----[1 5]-----[1 6]-----[1 7]\n===================================================\n{xp_required} xp until level {next_level}, You have {skill_points} SP to spend.",
-    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n                _____ MASSIVE XP PACK\n             /____ VC Status\n           /______________________ **(=[Completionist Role]=)**\n____/_____ Create Invites                     [Requires all skills]\n===================================================\n[1 8]-----[1 9]-----[2 0]               **More Comming Soon**\n===================================================\n{xp_required} xp until level {next_level}, You have {skill_points} SP to spend."
+    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n|_ Reaction Perms    _ Custom Color        ______________\n|_ Tiny XP Pack     /                     |\n|  |_______________|     _ Embed Perms    |\n|_ 1.10x XP Multi   \\___|_________________|______________\n=========================================================\n[ 0 ]-----[ 1 ]-----[ 2 ]-----[ 3 ]-----[ 4 ]-----[ 5 ]\n=========================================================\n{xp_required} xp until level {next_level}, You have {skill_points} SP to spend.",
+    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n____ Media Perms ________  _  _____ /report Command _____\n   __ External Emojis ___/   \_ External Stickers ___\n  /                                                 /\n_/___ Small XP Pack             Talk in Threads ___/\n=========================================================\n[ 6 ]-----[ 7 ]-----[ 8 ]-----[ 9 ]-----[1 0]-----[1 1]\n=========================================================\n{xp_required} xp until level {next_level}, You have {skill_points} SP to spend.",
+    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n___ _______________________________________\n   |_ Nickname Perms       Medium XP Pack _|\n      Tester Role _|       |_ 1.25x XP Multi\n           |_________________________|___________________\n=========================================================\n[1 2]-----[1 3]-----[1 4]-----[1 5]-----[1 6]-----[1 7]\n=========================================================\n{xp_required} xp until level {next_level}, You have {skill_points} SP to spend.",
+    f"{username}, Level {level} ({next_level_percentage})% | {skill_tree_progress}/{max_skill_tree_progress} Skills Unlocked\n       _____ MASSIVE XP PACK\n      /____ VC Status\n     /__________________________ (=[Completionist Role]=)\n____/_____ Create Invites           [Requires all skills]\n=========================================================\n[1 8]-----[1 9]-----[2 0]               More Comming Soon\n=========================================================\n{xp_required} xp until level {next_level}, You have {skill_points} SP to spend."
     ]
 
     if direction == "main":
@@ -70,7 +70,7 @@ def changePage(direction):
     elif direction == "next":
         page += 1
         return correct(level, next_level_percentage, message=skill_tree_pages[page])
-    
+
     elif direction == "prev":
         page -= 1
         return correct(level, next_level_percentage, message=skill_tree_pages[page])
@@ -85,9 +85,12 @@ def correct(level, next_level_percentage, message):
     #                                  (in 20% increments)^^     ^^(to get 20% 'chunks')
     if progress_bar < 0: progress_bar = 0 # if negative, set to 0
     message = message.replace("-", "~", progress_bar)
-    message = message.replace("_", "\_")
-    message = message.replace("~", "\~")
-    return message
+    return makeEmbed(message)
+
+def makeEmbed(message):
+    embed = nextcord.Embed(color=color, description=f"```{message}```", type="rich")
+    embed.set_author(name=f"{username}'s Skill Tree", icon_url=avatar)
+    return embed
 
 class skill_tree_view(nextcord.ui.View): # Skill Tree View
     def __init__(self, interaction: nextcord.Interaction):
@@ -99,26 +102,26 @@ class skill_tree_view(nextcord.ui.View): # Skill Tree View
         if interaction.user.id == userID: # Command user
             if page != 0:
                 message = changePage(direction="prev")
-                await interaction.response.edit_message(content=message, view=self) # wont work on page 0
+                await interaction.response.edit_message(embed=message, view=self) # wont work on page 0
         else: 
             await interaction.response.send_message("nuh uh, You need to open your own skill tree menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
-    
+
     @nextcord.ui.button(label="Main", style=nextcord.ButtonStyle.blurple, custom_id="skill_tree:main")
     async def main(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         if interaction.user.id == userID: # Command user
             if page != main_page:
                 message = changePage(direction="main")
-                await interaction.response.edit_message(content=message, view=self) # wont if already on main page
+                await interaction.response.edit_message(embed=message, view=self) # wont if already on main page
 
     @nextcord.ui.button(label="Next", style=nextcord.ButtonStyle.green, custom_id="skill_tree:next")
     async def next(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         if interaction.user.id == userID: # Command user
             if page != len(skill_tree_pages)-1:
                 message = changePage(direction="next")
-                await interaction.response.edit_message(content=message, view=self) # wont work on last page
+                await interaction.response.edit_message(embed=message, view=self) # wont work on last page
         else: 
             await interaction.response.send_message("nuh uh, You need to open your own skill tree menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
-    
+
     @nextcord.ui.button(label="Buy Skills", style=nextcord.ButtonStyle.green, custom_id="skill_tree:buy")
     async def buy(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         if interaction.user.id == userID: # Command user
@@ -132,7 +135,7 @@ class skill_tree_view(nextcord.ui.View): # Skill Tree View
             await interaction.response.edit_message(view=None)
         else: 
             await interaction.response.send_message("nuh uh, You need to open your own skill tree menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
-    
+
 class purchase_dropdown_view(nextcord.ui.View):
     def __init__(self, interaction: nextcord.Interaction):
         super().__init__(timeout=None)
@@ -158,14 +161,14 @@ class purchase_dropdown(nextcord.ui.Select):
         options.append(nextcord.SelectOption(label="Close", value="Close", description="Close buy menu.", emoji="❌")) # add close to each dropdown
 
         super().__init__(placeholder="Select a skill to buy", min_values=1, max_values=1, options=options)
-    
+
     async def callback(self, interaction: nextcord.Interaction): # On dropdown click
         if interaction.user.id == userID:
             if skill_points > 0: # has skill points
                 if self.values[0] != "Close": # save if chose skill
                     if skill_points < skills[page][float(self.values[0])]["cost"]: # not enough skill points
                         message = changePage(direction="none")
-                        await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
+                        await interaction.response.edit_message(embed=message, view=skill_tree_view(interaction))
                         await interaction.followup.send("You don't have enough skill points to buy this.", ephemeral=True)
                     else: # has enough skill points
                         skill_purchased = float(self.values[0])
@@ -175,7 +178,7 @@ class purchase_dropdown(nextcord.ui.Select):
                         if role == "n/a": # if there is no role (XP packs, XP multipliers & color roles)
                             if skill_purchased == 0.4: # Custom Color Picker
                                 message = changePage(direction="none")
-                                await interaction.response.edit_message(content=message, view=color_dropdown_view(interaction))
+                                await interaction.response.edit_message(embed=message, view=color_dropdown_view(interaction))
                             elif skill_purchased == 0.2: await updateXP(userID, Type="Pack_tiny", message=None) # tiny xp pack
                             elif skill_purchased == 1.3: await updateXP(userID, Type="Pack_small", message=None) # small xp pack
                             elif skill_purchased == 2.2: await updateXP(userID, Type="Pack_medium", message=None) # medium xp pack
@@ -185,7 +188,7 @@ class purchase_dropdown(nextcord.ui.Select):
                                     {"userID": userID},
                                     {"$inc": {"level_stats.xp_multi": + 0.1}}
                                 )
-                                
+
                             elif skill_purchased == 2.4: # 25% multi
                                 db_user_data.find_one_and_update(
                                     {"userID": userID},
@@ -194,21 +197,22 @@ class purchase_dropdown(nextcord.ui.Select):
 
                             if skill_purchased != 0.4: # if not picking color, close menu
                                 message = changePage(direction="none")
-                                await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
+                                await interaction.response.edit_message(embed=message, view=skill_tree_view(interaction))
 
                         else: # give role
                             role = interaction.guild.get_role(role)
                             await interaction.user.add_roles(role)
                             message = changePage(direction="none")
-                            await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
+                            await interaction.response.edit_message(embed=message, view=skill_tree_view(interaction))
                             await interaction.followup.send("Granted "+str(role)+" role.", ephemeral=True)
 
                 else: # is 'close'
                     message = changePage(direction="none")
-                    await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
+                    await interaction.response.edit_message(embed=message, view=skill_tree_view(interaction))
+
             else: # no skill points
-                message = changePage(direction="none") 
-                await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
+                message = changePage(direction="none")
+                await interaction.response.edit_message(embed=message, view=skill_tree_view(interaction))
                 if self.values[0] != "Close": await interaction.followup.send("You don't have any skill points to spend.", ephemeral=True)
         else: 
             await interaction.response.send_message("nuh uh, You need to open your own skill tree menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
@@ -241,7 +245,7 @@ class color_dropdown(nextcord.ui.Select):
             role = interaction.guild.get_role(role)
             await interaction.user.add_roles(role)
             message = changePage(direction="none")
-            await interaction.response.edit_message(content=message, view=skill_tree_view(interaction))
+            await interaction.response.edit_message(embed=message, view=skill_tree_view(interaction))
         else: 
             await interaction.response.send_message("nuh uh, You need to open your own skill tree menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
 
@@ -260,9 +264,17 @@ class Command_skill_tree_Cog(commands.Cog):
         formatOutput(output="/"+command+" Used by ("+str(userID)+")", status="Normal")
 
         await interaction.response.defer(with_message=True)
+
+        global color, avatar
+        if interaction.user.display_avatar == None: avatar = interaction.user.default_avatar
+        else: avatar = interaction.user.display_avatar
+        color = interaction.user.color
+
         message = changePage(direction="main")
 
-        await interaction.send(message, view=skill_tree_view(interaction))
+        # embed = nextcord.Embed(color=color, description=f"```{message}```", type="rich")
+        # embed.set_author(name=f"{username}'s Skill Tree", icon_url=avatar)
+        await interaction.send(embed=message, view=skill_tree_view(interaction))
         await saveData(command, userID, Type="Command")
 
 def setup(bot):
