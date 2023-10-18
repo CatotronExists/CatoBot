@@ -21,8 +21,8 @@ class moderation_menu_view(nextcord.ui.View):
             if interaction.user.id == self.interaction.user.id:    
                 await interaction.response.edit_message(view=moderation_action_view(interaction))
 
-            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
-        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
+            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!", ephemeral=True)
+        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
 
     @nextcord.ui.button(label="History", style=nextcord.ButtonStyle.blurple)
     async def history(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
@@ -30,8 +30,8 @@ class moderation_menu_view(nextcord.ui.View):
             if interaction.user.id == self.interaction.user.id:
                 await interaction.response.edit_message(view=moderation_history_view(interaction))
 
-            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
-        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
+            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!", ephemeral=True)
+        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
 
     @nextcord.ui.button(label="Remove", style=nextcord.ButtonStyle.blurple)
     async def remove(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
@@ -39,8 +39,8 @@ class moderation_menu_view(nextcord.ui.View):
             if interaction.user.id == self.interaction.user.id:
                 await interaction.response.edit_message(view=moderation_remove_view(interaction))
 
-            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
-        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
+            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!", ephemeral=True)
+        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
 
     @nextcord.ui.button(label="Close Menu", style=nextcord.ButtonStyle.red)
     async def fullclose(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
@@ -48,8 +48,8 @@ class moderation_menu_view(nextcord.ui.View):
             if interaction.user.id == self.interaction.user.id:
                 await interaction.response.edit_message(view=None)
 
-            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
-        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
+            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!", ephemeral=True)
+        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
 
 ###########################
 ### History Choice View
@@ -65,8 +65,8 @@ class moderation_history_choice_view(nextcord.ui.View):
             if interaction.user.id == self.interaction.user.id:
                 await interaction.response.edit_message(view=moderation_history_view(interaction, mode="warns"))
 
-            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
-        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
+            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!", ephemeral=True)
+        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
 
     @nextcord.ui.button(label="Kicks", style=nextcord.ButtonStyle.blurple)
     async def kicks(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
@@ -74,8 +74,8 @@ class moderation_history_choice_view(nextcord.ui.View):
             if interaction.user.id == self.interaction.user.id:
                 await interaction.response.edit_message(view=moderation_history_view(interaction, mode="kicks"))
 
-            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
-        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)")
+            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!", ephemeral=True)
+        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions")
 
     @nextcord.ui.button(label="Bans", style=nextcord.ButtonStyle.blurple)
     async def bans(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
@@ -83,8 +83,8 @@ class moderation_history_choice_view(nextcord.ui.View):
             if interaction.user.id == self.interaction.user.id:
                 await interaction.response.edit_message(view=moderation_history_view(interaction, mode="bans"))
 
-            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif)", ephemeral=True)
-        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif)")
+            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!", ephemeral=True)
+        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions")
 
     @nextcord.ui.button(label="Mutes", style=nextcord.ButtonStyle.blurple)
     async def mutes(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
@@ -92,8 +92,8 @@ class moderation_history_choice_view(nextcord.ui.View):
             if interaction.user.id == self.interaction.user.id:
                 await interaction.response.edit_message(view=moderation_history_view(interaction, mode="mutes"))
 
-            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh)", ephemeral=True)
-        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh)")
+            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!", ephemeral=True)
+        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions")
 
 ###########################
 ### History View {mode}
@@ -110,8 +110,8 @@ class moderation_history_view(nextcord.ui.View):
             if interaction.user.id == self.interaction.user.id:
                 await interaction.response.edit_message(view=moderation_history_choice_view(interaction))
 
-            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!\n[Nuh Uh](https://tenor.com/)", ephemeral=True)
-        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/)", ephemeral=True)
+            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!", ephemeral=True)
+        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
 
     @nextcord.ui.button(label="Forward", style=nextcord.ButtonStyle.blurple)
     async def forward(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
@@ -119,8 +119,8 @@ class moderation_history_view(nextcord.ui.View):
             if interaction.user.id == self.interaction.user.id:
                 await interaction.response.edit_message(view=moderation_history_choice_view(interaction))
 
-            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!\n[Nuh Uh](https://tenor.com/)", ephemeral=True)
-        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/)", ephemeral=True)
+            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!", ephemeral=True)
+        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
 
     @nextcord.ui.button(label="Close", style=nextcord.ButtonStyle.red)
     async def close(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
@@ -128,8 +128,8 @@ class moderation_history_view(nextcord.ui.View):
             if interaction.user.id == self.interaction.user.id:
                 await interaction.response.edit_message(view=moderation_menu_view(interaction))
 
-            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!\n[Nuh Uh](https://tenor.com/)", ephemeral=True)
-        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/)", ephemeral=True)
+            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!", ephemeral=True)
+        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
 
 ###########################
 ### Action View
@@ -143,37 +143,37 @@ class moderation_action_view(nextcord.ui.View):
     async def warn(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         if interaction.user.guild_permissions.administrator == True:
             if interaction.user.id == self.interaction.user.id:
-                await interaction.response.edit_message(view=moderation_action_form_view(interaction, action="warn"))
+                await interaction.response.edit_message(view=moderation_action_form_view(interaction, action="Warn", reason=None, duration=None))
 
-            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!\n[Nuh Uh](https://tenor.com/)", ephemeral=True)
-        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/)", ephemeral=True)
+            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!", ephemeral=True)
+        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
 
     @nextcord.ui.button(label="Kick", style=nextcord.ButtonStyle.blurple)
     async def kick(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         if interaction.user.guild_permissions.administrator == True:
             if interaction.user.id == self.interaction.user.id:    
-                await interaction.response.edit_message(view=moderation_action_form_view(interaction, action="kick"))
+                await interaction.response.edit_message(view=moderation_action_form_view(interaction, action="Kick", reason=None, duration=None))
 
-            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!\n[Nuh Uh](https://tenor.com/)", ephemeral=True)
-        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/)", ephemeral=True)
+            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!", ephemeral=True)
+        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
 
     @nextcord.ui.button(label="Ban", style=nextcord.ButtonStyle.blurple)
     async def ban(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         if interaction.user.guild_permissions.administrator == True:
             if interaction.user.id == self.interaction.user.id:    
-                await interaction.response.edit_message(view=moderation_action_form_view(interaction, action="ban"))
+                await interaction.response.edit_message(view=moderation_action_form_view(interaction, action="Ban", reason=None, duration=None))
 
-            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!\n[Nuh Uh](https://tenor.com/)", ephemeral=True)
-        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/)", ephemeral=True)
+            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!", ephemeral=True)
+        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
 
     @nextcord.ui.button(label="Mute", style=nextcord.ButtonStyle.blurple)
     async def mute(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         if interaction.user.guild_permissions.administrator == True:
             if interaction.user.id == self.interaction.user.id:    
-                await interaction.response.edit_message(view=moderation_action_form_view(interaction, action="mute"))
+                await interaction.response.edit_message(view=moderation_action_form_view(interaction, action="Mute", reason=None, duration=None))
 
-            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!\n[Nuh Uh](https://tenor.com/)", ephemeral=True)
-        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/)", ephemeral=True)
+            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!", ephemeral=True)
+        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
 
     @nextcord.ui.button(label="Cancel", style=nextcord.ButtonStyle.red)
     async def cancel(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
@@ -181,47 +181,52 @@ class moderation_action_view(nextcord.ui.View):
             if interaction.user.id == self.interaction.user.id:    
                 await interaction.response.edit_message(view=moderation_menu_view(interaction))
 
-            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!\n[Nuh Uh](https://tenor.com/)", ephemeral=True)
-        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/)", ephemeral=True)
+            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!", ephemeral=True)
+        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
 
 ###########################
 ### Action Form View (Builds reason, duration)
 ###########################
 class moderation_action_form_view(nextcord.ui.View):
-    def __init__(self, interaction: nextcord.Interaction, action=None):
+    def __init__(self, interaction: nextcord.Interaction, action, reason, duration):
         super().__init__(timeout=None)
         self.interaction = interaction
         self.action = action
+        self.reason = reason
+        self.duration = duration
+        print(action)
+        print(reason)
+        print(duration)
     
     @nextcord.ui.button(label="Reason", style=nextcord.ButtonStyle.blurple)
     async def reason(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         if interaction.user.guild_permissions.administrator == True:
-            if interaction.user.id == self.interaction.user.id:
-                await interaction.response.edit_message(view=moderation_reason_dropdown())
-                
-            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
-        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh)", ephemeral=True)
-    
+            if interaction.user.id == userID:
+                await interaction.response.edit_message(view=moderation_reason_dropdown_view(interaction, self.action, self.reason, self.duration))
+        
+            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!", ephemeral=True)
+        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
+
     @nextcord.ui.button(label="Duration", style=nextcord.ButtonStyle.blurple)
     async def duration(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         if interaction.user.guild_permissions.administrator == True:
-            if interaction.user.id == self.interaction.user.id:
-                if self.action == "warn": await interaction.response.edit_message(view=moderation_duration_dropdown(interaction, action=self.action))
-                else: await interaction.response.edit_message(view=moderation_duration_dropdown(interaction, action=self.action))
-                
-            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!\n[Nuh Uh](https://tenor.com/)", ephemeral=True)
-        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/)", ephemeral=True)
+            if interaction.user.id == userID:
+                await interaction.response.edit_message(view=moderation_duration_dropdown_view(interaction, self.action, self.reason, self.duration))
+
+            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!", ephemeral=True)
+        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
 
     @nextcord.ui.button(label="Confirm", style=nextcord.ButtonStyle.blurple)
     async def confirmaction(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         if interaction.user.guild_permissions.administrator == True:
             if interaction.user.id == self.interaction.user.id:
                 await interaction.response.edit_message(view=moderation_menu_view(interaction))
+                await interaction.followup.send(f"Action Confirmed\n{self.action} {self.reason} {self.duration}", ephemeral=True)
                 # 'commit' action & save
                 # plus followup confirming action has been done
 
-            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
-        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh)", ephemeral=True)
+            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!", ephemeral=True)
+        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
 
     @nextcord.ui.button(label="Cancel", style=nextcord.ButtonStyle.red)
     async def cancel(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
@@ -229,8 +234,8 @@ class moderation_action_form_view(nextcord.ui.View):
             if interaction.user.id == self.interaction.user.id:
                 await interaction.response.edit_message(view=moderation_menu_view(interaction))
 
-            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!\n[Nuh Uh](https://tenor.com/)", ephemeral=True)
-        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/)", ephemeral=True)
+            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!", ephemeral=True)
+        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
 
 ###########################
 ### Removal View
@@ -246,8 +251,8 @@ class moderation_remove_view(nextcord.ui.View):
             if interaction.user.id == self.interaction.user.id:
                 await interaction.send("Case Removed", ephemeral=True)
 
-            else: await interaction.send("nuh uh, You need to open your own moderation menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh)", ephemeral=True)
-        else: await interaction.send("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh)", ephemeral=True)
+            else: await interaction.send("nuh uh, You need to open your own moderation menu!", ephemeral=True)
+        else: await interaction.send("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
 
     @nextcord.ui.button(label="Case 2", style=nextcord.ButtonStyle.blurple)
     async def case2(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
@@ -255,8 +260,8 @@ class moderation_remove_view(nextcord.ui.View):
             if interaction.user.id == self.interaction.user.id:
                 await interaction.send("Case Removed", ephemeral=True)
 
-            else: await interaction.send("nuh uh, You need to open your own moderation menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh)", ephemeral=True)
-        else: await interaction.send("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh)", ephemeral=True)
+            else: await interaction.send("nuh uh, You need to open your own moderation menu!", ephemeral=True)
+        else: await interaction.send("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
 
     @nextcord.ui.button(label="Case 3", style=nextcord.ButtonStyle.blurple)
     async def case3(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
@@ -264,8 +269,8 @@ class moderation_remove_view(nextcord.ui.View):
             if interaction.user.id == self.interaction.user.id:
                 await interaction.send("Case Removed", ephemeral=True)
 
-            else: await interaction.send("nuh uh, You need to open your own moderation menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh)", ephemeral=True)
-        else: await interaction.send("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh)", ephemeral=True)
+            else: await interaction.send("nuh uh, You need to open your own moderation menu!", ephemeral=True)
+        else: await interaction.send("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
 
     @nextcord.ui.button(label="Case 4", style=nextcord.ButtonStyle.blurple)
     async def case4(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
@@ -273,8 +278,8 @@ class moderation_remove_view(nextcord.ui.View):
             if interaction.user.id == self.interaction.user.id:    
                 await interaction.send("Case Removed", ephemeral=True)
 
-            else: await interaction.send("nuh uh, You need to open your own moderation menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh)", ephemeral=True)
-        else: await interaction.send("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh)", ephemeral=True)
+            else: await interaction.send("nuh uh, You need to open your own moderation menu!", ephemeral=True)
+        else: await interaction.send("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
 
     @nextcord.ui.button(label="Cancel", style=nextcord.ButtonStyle.red)
     async def cancel(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
@@ -282,8 +287,8 @@ class moderation_remove_view(nextcord.ui.View):
             if interaction.user.id == self.interaction.user.id:    
                 await interaction.response.edit_message(view=moderation_menu_view(interaction))
 
-            else: await interaction.send("nuh uh, You need to open your own moderation menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh)", ephemeral=True)
-        else: await interaction.send("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh)", ephemeral=True)
+            else: await interaction.send("nuh uh, You need to open your own moderation menu!", ephemeral=True)
+        else: await interaction.send("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
 
 ##########################################################
 ### Dropdowns
@@ -292,31 +297,38 @@ class moderation_remove_view(nextcord.ui.View):
 ### Reason Dropdown
 ###########################
 class moderation_reason_dropdown_view(nextcord.ui.View):
-    def __init__(self, interaction: nextcord.Interaction, action=None):
+    def __init__(self, interaction: nextcord.Interaction, action, reason, duration):
         super().__init__(timeout=None)
         self.interaction = interaction
         self.action = action
+        self.reason = reason
+        self.duration = duration
+        print(self)
         self.add_item(moderation_reason_dropdown())
 
 class moderation_reason_dropdown(nextcord.ui.Select):
     def __init__(self):
         options = []
-        options.append(nextcord.SelectOption(label="Reason 1", value="Reason 1"))
-        options.append(nextcord.SelectOption(label="Reason 2", value="Reason 2"))
-        options.append(nextcord.SelectOption(label="Reason 3", value="Reason 3"))
-        options.append(nextcord.SelectOption(label="Reason 4", value="Reason 4"))
-        options.append(nextcord.SelectOption(label="Reason 5", value="Reason 5"))
-        options.append(nextcord.SelectOption(label="Cancel", value="Cancel"))
+        options.append(nextcord.SelectOption(emoji="💥", label="Bullying/Harrasment", value="Bullying/Harrasment"))
+        options.append(nextcord.SelectOption(emoji="⚠", label="Racism", value="Racism"))
+        options.append(nextcord.SelectOption(emoji="🛡", label="NSFW Content", value="NSFW Content"))
+        options.append(nextcord.SelectOption(emoji="🤖", label="Bot/Scammer", value="Bot/Scammer"))
+        options.append(nextcord.SelectOption(emoji="❔", label="Other", value="Other"))
+        options.append(nextcord.SelectOption(emoji="❌", label="Cancel", value="Cancel"))
         super().__init__(placeholder="Select a Reason", min_values=1, max_values=1, options=options)
+        print(self)
+        self.duration = self.duration
+        self.reason = self.reason
+        self.action = self.action
 
     async def callback(self, interaction: nextcord.Interaction):
         if interaction.user.guild_permissions.administrator == True:
-            if interaction.user.id == self.interaction.user.id:
+            if interaction.user.id == userID:
                 if self.values[0] == "Cancel": await interaction.response.edit_message(view=moderation_menu_view(interaction))
-                else: await interaction.response.edit_message(view=moderation_action_form_view(interaction))
+                else: await interaction.response.edit_message(view=moderation_action_form_view(interaction, reason=self.values[0], duration=self.duration, action=self.action))
 
-            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
-        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh)", ephemeral=True)
+            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!", ephemeral=True)
+        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions)", ephemeral=True)
 
 ###########################
 ### Duration Dropdown
@@ -326,10 +338,10 @@ class moderation_duration_dropdown_view(nextcord.ui.View):
         super().__init__(timeout=None)
         self.interaction = interaction
         self.action = action
-        self.add_item(moderation_duration_dropdown())
+        self.add_item(moderation_duration_dropdown(action))
 
 class moderation_duration_dropdown(nextcord.ui.Select):
-    def __init__(self):
+    def __init__(self, action):
         options = []
         options.append(nextcord.SelectOption(label="Permanent", value="Permanent"))
         options.append(nextcord.SelectOption(label="10m", value="10m"))
@@ -348,12 +360,12 @@ class moderation_duration_dropdown(nextcord.ui.Select):
 
     async def callback(self, interaction: nextcord.Interaction):
         if interaction.user.guild_permissions.administrator == True:
-            if interaction.user.id == self.interaction.user.id:
+            if interaction.user.id == userID:
                 if self.values[0] == "Cancel": await interaction.response.edit_message(view=moderation_action_form_view(interaction, action=self.action))
-                else: await interaction.response.edit_message(view=moderation_action_form_view(interaction))
+                else: await interaction.response.edit_message(view=moderation_action_form_view(interaction, action=action))
 
-            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
-        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh)", ephemeral=True)
+            else: await interaction.response.send_message("nuh uh, You need to open your own moderation menu!", ephemeral=True)
+        else: await interaction.response.send_message("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
 
 ##########################################################
 ### Command
@@ -365,6 +377,7 @@ class Command_moderation_Cog(commands.Cog):
     @nextcord.slash_command(guild_ids=[guild_ID], name="moderation", description="Opens the Moderation Menu")
     async def moderation(self, interaction: nextcord.Interaction, user: nextcord.User):
         command = 'moderation'
+        global userID
         userID = interaction.user.id
         username = interaction.user.name
         searched_username = user.name
@@ -410,17 +423,17 @@ class Command_moderation_Cog(commands.Cog):
                     await saveData(command, userID, Type="Command")
 
                 else:
-                    await interaction.send("nuh uh, you cant moderate a mod/admin\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
+                    await interaction.send("nuh uh, you cant moderate a mod/admin", ephemeral=True)
                     await saveData(command, userID, Type="Command")
                     formatOutput(output="    "+str(userID)+" Attempted to moderate a mod/admin", status="Warning")
 
             else: 
-                await interaction.send("nuh uh, you cant moderate yourself\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
+                await interaction.send("nuh uh, you cant moderate yourself", ephemeral=True)
                 await saveData(command, userID, Type="Command")
                 formatOutput(output="    "+str(userID)+" Attempted to moderate self", status="Warning")
 
         else: 
-            await interaction.send("nuh uh, Insufficient Permissions\nMissing Administrator Permissions\n[Nuh Uh](https://tenor.com/view/nuh-uh-nuh-uh-starved-eggman-gif-26280682)", ephemeral=True)
+            await interaction.send("nuh uh, Insufficient Permissions\nMissing Administrator Permissions", ephemeral=True)
             await saveData(command, userID, Type="Command")
             formatOutput(output="    Insufficient Permissions for "+str(userID), status="Warning")
 
@@ -442,7 +455,7 @@ def setup(bot):
 #        |                    _____________/_____/_____/______/__________________/
 #        |                   |                                                  /
 #        |      'history {category}' buttons: back, forward, close ____________/
-#        |                                    |_^page nav_|                   /
+#        |                                      ^page nav^                    /
 #        |                                                                   /
 #     'action' buttons: warn, kick, ban, mute, cancel ______________________/
 #              __________/_____/_____/_____/                               /
