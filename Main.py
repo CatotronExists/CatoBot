@@ -25,8 +25,8 @@ CBOLD = '\033[1m'
 #                 #
 
 # Vars #
-extension_command_list = ["bot_stats", "user_lookup", "command_leaderboard", "skill_tree", "help", "moderation", "server_stats"]
-full_command_list = ["shutdown", "reload", "bot_stats", "user_lookup", "command_leaderboard", "skill_tree", "help", "moderation", "server_stats"]
+extension_command_list = ["bot_stats", "user_lookup", "skill_tree", "help", "moderation", "server_stats", "leaderboard"]
+full_command_list = ["shutdown", "reload", "bot_stats", "user_lookup", "skill_tree", "help", "moderation", "server_stats", "leaderboard"]
 #      #
 
 ### Discord Setup

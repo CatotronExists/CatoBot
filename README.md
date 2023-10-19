@@ -27,9 +27,10 @@ Full Patch Notes: https://github.com/CatotronExists/CatoBot/releases/tag/v0.6
 Use /help [command] for more information!
 
 **General Commands**\
+/server_stats - Shows stats for the server\
 /skill_tree - Opens Skill Tree Menu\
 /help [command] - Opens Help Menu for specified command\
-/command_leaderboard - Shows Leaderboard for command usage\
+/leaderboard [type] - Shows Leaderboard for command usage or most leveled users\
 /user_lookup {user} - Shows stats for specified user, leave the {user} blank to search yourself\
 /bot_stats - Shows basic stats for the bot like, uptime and version
 

@@ -221,6 +221,7 @@ class moderation_action_form_view(nextcord.ui.View):
         if interaction.user.guild_permissions.administrator == True:
             if interaction.user.id == self.interaction.user.id:
                 await interaction.response.edit_message(view=moderation_menu_view(interaction))
+                if self.action == "e": pass
                 await interaction.followup.send(f"Action Confirmed\n{self.action} {self.reason} {self.duration}", ephemeral=True)
                 # 'commit' action & save
                 # plus followup confirming action has been done

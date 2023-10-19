@@ -262,18 +262,14 @@ class Command_skill_tree_Cog(commands.Cog):
         username = username.capitalize()
 
         formatOutput(output="/"+command+" Used by ("+str(userID)+")", status="Normal")
-
         await interaction.response.defer(with_message=True)
 
         global color, avatar
         if interaction.user.display_avatar == None: avatar = interaction.user.default_avatar
         else: avatar = interaction.user.display_avatar
         color = interaction.user.color
-
         message = changePage(direction="main")
 
-        # embed = nextcord.Embed(color=color, description=f"```{message}```", type="rich")
-        # embed.set_author(name=f"{username}'s Skill Tree", icon_url=avatar)
         await interaction.send(embed=message, view=skill_tree_view(interaction))
         await saveData(command, userID, Type="Command")
 
