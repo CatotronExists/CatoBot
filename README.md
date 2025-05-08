@@ -1,4 +1,6 @@
 ## CatoBot
+**Discontinued as of 8/05/2025**
+
 A simple discord bot used in Catotron's World Discord Server\
 _"A place for everything Catotron (Content Creation and Development)"_
 
